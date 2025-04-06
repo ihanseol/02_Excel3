@@ -483,7 +483,7 @@ Sub FXSAVE_FormulaSUB_ROI(Mode As String, FileNum As Integer)
 
     Dim nofwell As String
     Dim i As Integer
-    Dim Shultze, Webber, Jacob, T, K, S, time_, delta_h As String
+    Dim Shultze, Webber, Jacob, T, k, S, time_, delta_h As String
 
     nofwell = GetNumberOfWell()
     Sheets("YangSoo").Select
@@ -505,7 +505,7 @@ Sub FXSAVE_FormulaSUB_ROI(Mode As String, FileNum As Integer)
 
         T = CStr(format(Cells(4 + i, "q").value, "0.0000"))
         S = CStr(format(Cells(4 + i, "s").value, "0.0000000"))
-        K = CStr(format(Cells(4 + i, "t").value, "0.0000"))
+        k = CStr(format(Cells(4 + i, "t").value, "0.0000"))
 
         delta_h = CStr(format(Cells(4 + i, "f").value, "0.00"))
         time_ = CStr(format(Cells(4 + i, "u").value, "0.0000"))
@@ -513,8 +513,8 @@ Sub FXSAVE_FormulaSUB_ROI(Mode As String, FileNum As Integer)
 
         ' Cells(4 + i, "y").value = Format(skin(i), "0.0000")
 
-        formula1 = "W-" & i & "호공~~R _{W-" & i & "} ``=`` sqrt {6 TIMES  " & delta_h & " TIMES  " & K & " TIMES  " & time_ & "/" & S & "} ``=~" & schultze & "m"
-        formula2 = "W-" & i & "호공~~R _{W-" & i & "} ``=3`` sqrt {" & delta_h & " TIMES " & K & " TIMES " & time_ & "/" & S & "} `=`" & Webber & "`m"
+        formula1 = "W-" & i & "호공~~R _{W-" & i & "} ``=`` sqrt {6 TIMES  " & delta_h & " TIMES  " & k & " TIMES  " & time_ & "/" & S & "} ``=~" & schultze & "m"
+        formula2 = "W-" & i & "호공~~R _{W-" & i & "} ``=3`` sqrt {" & delta_h & " TIMES " & k & " TIMES " & time_ & "/" & S & "} `=`" & Webber & "`m"
         formula3 = "W-" & i & "호공~~r _{0(W-" & i & ")} `=~ sqrt {{2.25 TIMES  " & T & " TIMES  " & time_ & "} over {" & S & "}} `=~" & Jacob & "m"
 
 

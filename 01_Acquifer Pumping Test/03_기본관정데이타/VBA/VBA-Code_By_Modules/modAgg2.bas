@@ -23,7 +23,7 @@ Private Type WellParameters
     T2 As Double
     TA As Double
     
-    K As Double
+    k As Double
     Time As Double
     
     S1 As Double
@@ -102,7 +102,7 @@ Private Function GetWellParameters(ws As Worksheet, wellIndex As Integer) As Wel
         .Time = ws.Cells(row, "U").value
         .S1 = ws.Cells(row, "R").value
         .S2 = ws.Cells(row, "S").value
-        .K = ws.Cells(row, "T").value
+        .k = ws.Cells(row, "T").value
         
         .Schultz = ws.Cells(row, "V").value
         .Webber = ws.Cells(row, "W").value
@@ -271,7 +271,7 @@ Private Sub GROK_WriteRadiusOfInfluence(wellIndex As Integer, params As WellPara
             .value = params.TA: .numberFormat = "0.0000"
         End With
         With .Offset(2, 0)
-            .value = params.K: .numberFormat = "0.0000"
+            .value = params.k: .numberFormat = "0.0000"
         End With
         With .Offset(3, 0)
             .value = params.S2: .numberFormat = "0.0000000"

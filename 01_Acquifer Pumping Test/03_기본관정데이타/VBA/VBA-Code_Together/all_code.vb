@@ -12333,9 +12333,10 @@ Sub ImportWell_MainWellPage()
 ' import Sheets("Well") Page
 '
     Dim fName As String
-    Dim nofwell, i As Integer
+    Dim nofwell, i, j, start_index   As Integer
     
-    Dim Address, Company As String
+    Dim Address, Company, FinalAddress As String
+    Dim address_array As Variant
     Dim simdo, diameter, Q, Hp As Double
     
     nofwell = sheets_count()
@@ -12356,12 +12357,24 @@ Sub ImportWell_MainWellPage()
         Address = Replace(wsYangSoo.Cells(4 + i, "ao").value, "충청남도 ", "")
         Address = Replace(Address, "번지", "")
         
+        address_aray = Split(Address, " ")
+        
+        For j = 0 To UBound(address_aray)
+            
+            If Right(address_aray(j), 1) = "도" Then
+                GoTo NextIteration
+            Else
+                FinalAddress = FinalAddress & " " & address_aray(j)
+            End If
+NextIteration:
+        Next j
+        
         simdo = wsYangSoo.Cells(4 + i, "i").value
         diameter = wsYangSoo.Cells(4 + i, "g").value
         Q = wsYangSoo.Cells(4 + i, "k").value
         Hp = wsYangSoo.Cells(4 + i, "m").value
         
-        wsWell.Cells(3 + i, "d").value = Address
+        wsWell.Cells(3 + i, "d").value = FinalAddress
         wsWell.Cells(3 + i, "g").value = diameter
         wsWell.Cells(3 + i, "h").value = simdo
         wsWell.Cells(3 + i, "i").value = Q
@@ -13000,7 +13013,7 @@ Sub FXSAVE_FormulaSUB_ROI(Mode As String, FileNum As Integer)
 
     Dim nofwell As String
     Dim i As Integer
-    Dim Shultze, Webber, Jacob, T, K, S, time_, delta_h As String
+    Dim Shultze, Webber, Jacob, T, k, S, time_, delta_h As String
 
     nofwell = GetNumberOfWell()
     Sheets("YangSoo").Select
@@ -13022,7 +13035,7 @@ Sub FXSAVE_FormulaSUB_ROI(Mode As String, FileNum As Integer)
 
         T = CStr(format(Cells(4 + i, "q").value, "0.0000"))
         S = CStr(format(Cells(4 + i, "s").value, "0.0000000"))
-        K = CStr(format(Cells(4 + i, "t").value, "0.0000"))
+        k = CStr(format(Cells(4 + i, "t").value, "0.0000"))
 
         delta_h = CStr(format(Cells(4 + i, "f").value, "0.00"))
         time_ = CStr(format(Cells(4 + i, "u").value, "0.0000"))
@@ -13030,8 +13043,8 @@ Sub FXSAVE_FormulaSUB_ROI(Mode As String, FileNum As Integer)
 
         ' Cells(4 + i, "y").value = Format(skin(i), "0.0000")
 
-        formula1 = "W-" & i & "호공~~R _{W-" & i & "} ``=`` sqrt {6 TIMES  " & delta_h & " TIMES  " & K & " TIMES  " & time_ & "/" & S & "} ``=~" & schultze & "m"
-        formula2 = "W-" & i & "호공~~R _{W-" & i & "} ``=3`` sqrt {" & delta_h & " TIMES " & K & " TIMES " & time_ & "/" & S & "} `=`" & Webber & "`m"
+        formula1 = "W-" & i & "호공~~R _{W-" & i & "} ``=`` sqrt {6 TIMES  " & delta_h & " TIMES  " & k & " TIMES  " & time_ & "/" & S & "} ``=~" & schultze & "m"
+        formula2 = "W-" & i & "호공~~R _{W-" & i & "} ``=3`` sqrt {" & delta_h & " TIMES " & k & " TIMES " & time_ & "/" & S & "} `=`" & Webber & "`m"
         formula3 = "W-" & i & "호공~~r _{0(W-" & i & ")} `=~ sqrt {{2.25 TIMES  " & T & " TIMES  " & time_ & "} over {" & S & "}} `=~" & Jacob & "m"
 
 
@@ -14764,7 +14777,7 @@ Private Type WellParameters
     T2 As Double
     TA As Double
     
-    K As Double
+    k As Double
     Time As Double
     
     S1 As Double
@@ -14843,7 +14856,7 @@ Private Function GetWellParameters(ws As Worksheet, wellIndex As Integer) As Wel
         .Time = ws.Cells(row, "U").value
         .S1 = ws.Cells(row, "R").value
         .S2 = ws.Cells(row, "S").value
-        .K = ws.Cells(row, "T").value
+        .k = ws.Cells(row, "T").value
         
         .Schultz = ws.Cells(row, "V").value
         .Webber = ws.Cells(row, "W").value
@@ -15012,7 +15025,7 @@ Private Sub GROK_WriteRadiusOfInfluence(wellIndex As Integer, params As WellPara
             .value = params.TA: .numberFormat = "0.0000"
         End With
         With .Offset(2, 0)
-            .value = params.K: .numberFormat = "0.0000"
+            .value = params.k: .numberFormat = "0.0000"
         End With
         With .Offset(3, 0)
             .value = params.S2: .numberFormat = "0.0000000"
@@ -15206,8 +15219,14 @@ Private Sub WriteWellSummary(WellData As WellDataOne, ByVal wellIndex As Integer
     With Range("G" & rowNumber)
         .value = wellLabel
         .Offset(0, 1).value = WellData.Qh
+        .Offset(0, 1).numberFormat = "0.0"
+        
         .Offset(0, 2).value = WellData.Qg
+        .Offset(0, 2).numberFormat = "0.00"
+        
         .Offset(0, 3).value = WellData.Q
+        .Offset(0, 3).numberFormat = "0.0"
+        
         .Offset(0, 4).value = WellData.Ratio
     End With
     
@@ -15270,6 +15289,8 @@ Private Sub ClearRange(ByVal rangeAddress As String)
     Range(rangeAddress).ClearContents
 End Sub
 
+
+
 '
 ' Refactor By User Defined Type
 '
@@ -15300,7 +15321,7 @@ Private Type WellData
     S1 As Double
     S2 As Double
     
-    K As Double
+    k As Double
     Time As Double
     
     Shultze As Double
@@ -15413,7 +15434,7 @@ Private Function ImportDataForWell(ByVal wellIndex As Integer) As WellData
             .S1 = wsSkinFactor.Range("e10").value
             .S2 = wsSkinFactor.Range("i16").value
 
-            .K = wsSkinFactor.Range("e16").value
+            .k = wsSkinFactor.Range("e16").value
             .Time = wsSkinFactor.Range("h16").value
 
             .Shultze = wsSkinFactor.Range("c13").value
@@ -15482,7 +15503,7 @@ Private Sub SetWellDataToSheet(ByVal wellIndex As Integer, well As WellData)
         SetCellValue row, 18, .S1, "0.0000000"
         SetCellValue row, 19, .S2, "0.0000000"
         
-        SetCellValue row, 20, .K, "0.0000"
+        SetCellValue row, 20, .k, "0.0000"
         SetCellValue row, 21, .Time, "0.0000"
         SetCellValue row, 22, .Shultze, "0.00"
         SetCellValue row, 23, .Webber, "0.00"
@@ -15768,7 +15789,7 @@ Sub FormulaSUB_ROI(Mode As String, FileNum As Integer)
     
     Dim nofwell As String
     Dim i As Integer
-    Dim Shultze, Webber, Jacob, T, K, S, time_, delta_h As String
+    Dim Shultze, Webber, Jacob, T, k, S, time_, delta_h As String
     
     nofwell = GetNumberOfWell()
     Sheets("YangSoo").Select
@@ -15790,7 +15811,7 @@ Sub FormulaSUB_ROI(Mode As String, FileNum As Integer)
         
         T = CStr(format(Cells(4 + i, "q").value, "0.0000"))
         S = CStr(format(Cells(4 + i, "s").value, "0.0000000"))
-        K = CStr(format(Cells(4 + i, "t").value, "0.0000"))
+        k = CStr(format(Cells(4 + i, "t").value, "0.0000"))
     
         delta_h = CStr(format(Cells(4 + i, "f").value, "0.00"))
         time_ = CStr(format(Cells(4 + i, "u").value, "0.0000"))
@@ -15798,8 +15819,8 @@ Sub FormulaSUB_ROI(Mode As String, FileNum As Integer)
         
         ' Cells(4 + i, "y").value = Format(skin(i), "0.0000")
         
-        formula1 = "W-" & i & "호공~~R _{W-" & i & "} ``=`` sqrt {6 TIMES  " & delta_h & " TIMES  " & K & " TIMES  " & time_ & "/" & S & "} ``=~" & schultze & "m"
-        formula2 = "W-" & i & "호공~~R _{W-" & i & "} ``=3`` sqrt {" & delta_h & " TIMES " & K & " TIMES " & time_ & "/" & S & "} `=`" & Webber & "`m"
+        formula1 = "W-" & i & "호공~~R _{W-" & i & "} ``=`` sqrt {6 TIMES  " & delta_h & " TIMES  " & k & " TIMES  " & time_ & "/" & S & "} ``=~" & schultze & "m"
+        formula2 = "W-" & i & "호공~~R _{W-" & i & "} ``=3`` sqrt {" & delta_h & " TIMES " & k & " TIMES " & time_ & "/" & S & "} `=`" & Webber & "`m"
         formula3 = "W-" & i & "호공~~r _{0(W-" & i & ")} `=~ sqrt {{2.25 TIMES  " & T & " TIMES  " & time_ & "} over {" & S & "}} `=~" & Jacob & "m"
         
         

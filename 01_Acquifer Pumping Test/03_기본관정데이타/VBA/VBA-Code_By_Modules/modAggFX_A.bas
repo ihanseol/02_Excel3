@@ -29,7 +29,7 @@ Private Type WellData
     S1 As Double
     S2 As Double
     
-    K As Double
+    k As Double
     Time As Double
     
     Shultze As Double
@@ -142,7 +142,7 @@ Private Function ImportDataForWell(ByVal wellIndex As Integer) As WellData
             .S1 = wsSkinFactor.Range("e10").value
             .S2 = wsSkinFactor.Range("i16").value
 
-            .K = wsSkinFactor.Range("e16").value
+            .k = wsSkinFactor.Range("e16").value
             .Time = wsSkinFactor.Range("h16").value
 
             .Shultze = wsSkinFactor.Range("c13").value
@@ -211,7 +211,7 @@ Private Sub SetWellDataToSheet(ByVal wellIndex As Integer, well As WellData)
         SetCellValue row, 18, .S1, "0.0000000"
         SetCellValue row, 19, .S2, "0.0000000"
         
-        SetCellValue row, 20, .K, "0.0000"
+        SetCellValue row, 20, .k, "0.0000"
         SetCellValue row, 21, .Time, "0.0000"
         SetCellValue row, 22, .Shultze, "0.00"
         SetCellValue row, 23, .Webber, "0.00"
@@ -497,7 +497,7 @@ Sub FormulaSUB_ROI(Mode As String, FileNum As Integer)
     
     Dim nofwell As String
     Dim i As Integer
-    Dim Shultze, Webber, Jacob, T, K, S, time_, delta_h As String
+    Dim Shultze, Webber, Jacob, T, k, S, time_, delta_h As String
     
     nofwell = GetNumberOfWell()
     Sheets("YangSoo").Select
@@ -519,7 +519,7 @@ Sub FormulaSUB_ROI(Mode As String, FileNum As Integer)
         
         T = CStr(format(Cells(4 + i, "q").value, "0.0000"))
         S = CStr(format(Cells(4 + i, "s").value, "0.0000000"))
-        K = CStr(format(Cells(4 + i, "t").value, "0.0000"))
+        k = CStr(format(Cells(4 + i, "t").value, "0.0000"))
     
         delta_h = CStr(format(Cells(4 + i, "f").value, "0.00"))
         time_ = CStr(format(Cells(4 + i, "u").value, "0.0000"))
@@ -527,8 +527,8 @@ Sub FormulaSUB_ROI(Mode As String, FileNum As Integer)
         
         ' Cells(4 + i, "y").value = Format(skin(i), "0.0000")
         
-        formula1 = "W-" & i & "호공~~R _{W-" & i & "} ``=`` sqrt {6 TIMES  " & delta_h & " TIMES  " & K & " TIMES  " & time_ & "/" & S & "} ``=~" & schultze & "m"
-        formula2 = "W-" & i & "호공~~R _{W-" & i & "} ``=3`` sqrt {" & delta_h & " TIMES " & K & " TIMES " & time_ & "/" & S & "} `=`" & Webber & "`m"
+        formula1 = "W-" & i & "호공~~R _{W-" & i & "} ``=`` sqrt {6 TIMES  " & delta_h & " TIMES  " & k & " TIMES  " & time_ & "/" & S & "} ``=~" & schultze & "m"
+        formula2 = "W-" & i & "호공~~R _{W-" & i & "} ``=3`` sqrt {" & delta_h & " TIMES " & k & " TIMES " & time_ & "/" & S & "} `=`" & Webber & "`m"
         formula3 = "W-" & i & "호공~~r _{0(W-" & i & ")} `=~ sqrt {{2.25 TIMES  " & T & " TIMES  " & time_ & "} over {" & S & "}} `=~" & Jacob & "m"
         
         

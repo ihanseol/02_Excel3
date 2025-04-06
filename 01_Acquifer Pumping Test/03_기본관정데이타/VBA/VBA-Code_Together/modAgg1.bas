@@ -115,8 +115,14 @@ Private Sub WriteWellSummary(WellData As WellDataOne, ByVal wellIndex As Integer
     With Range("G" & rowNumber)
         .value = wellLabel
         .Offset(0, 1).value = WellData.Qh
+        .Offset(0, 1).numberFormat = "0.0"
+        
         .Offset(0, 2).value = WellData.Qg
+        .Offset(0, 2).numberFormat = "0.00"
+        
         .Offset(0, 3).value = WellData.Q
+        .Offset(0, 3).numberFormat = "0.0"
+        
         .Offset(0, 4).value = WellData.Ratio
     End With
     
@@ -178,4 +184,6 @@ Private Sub ClearRange(ByVal rangeAddress As String)
     ' Clears content in specified range
     Range(rangeAddress).ClearContents
 End Sub
+
+
 

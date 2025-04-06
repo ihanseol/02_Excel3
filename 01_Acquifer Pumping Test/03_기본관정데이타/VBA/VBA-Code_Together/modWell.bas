@@ -417,9 +417,10 @@ Sub ImportWell_MainWellPage()
 ' import Sheets("Well") Page
 '
     Dim fName As String
-    Dim nofwell, i As Integer
+    Dim nofwell, i, j, start_index   As Integer
     
-    Dim Address, Company As String
+    Dim Address, Company, FinalAddress As String
+    Dim address_array As Variant
     Dim simdo, diameter, Q, Hp As Double
     
     nofwell = sheets_count()
@@ -440,12 +441,24 @@ Sub ImportWell_MainWellPage()
         Address = Replace(wsYangSoo.Cells(4 + i, "ao").value, "충청남도 ", "")
         Address = Replace(Address, "번지", "")
         
+        address_aray = Split(Address, " ")
+        
+        For j = 0 To UBound(address_aray)
+            
+            If Right(address_aray(j), 1) = "도" Then
+                GoTo NextIteration
+            Else
+                FinalAddress = FinalAddress & " " & address_aray(j)
+            End If
+NextIteration:
+        Next j
+        
         simdo = wsYangSoo.Cells(4 + i, "i").value
         diameter = wsYangSoo.Cells(4 + i, "g").value
         Q = wsYangSoo.Cells(4 + i, "k").value
         Hp = wsYangSoo.Cells(4 + i, "m").value
         
-        wsWell.Cells(3 + i, "d").value = Address
+        wsWell.Cells(3 + i, "d").value = FinalAddress
         wsWell.Cells(3 + i, "g").value = diameter
         wsWell.Cells(3 + i, "h").value = simdo
         wsWell.Cells(3 + i, "i").value = Q
