@@ -17,6 +17,7 @@ End Sub
 Sub DeleteAllImages(ByVal singleWell As Integer)
     Dim ws As Worksheet
     Dim sh As Shape
+    Dim i, remainder As Integer
     
     Set ws = ThisWorkbook.Worksheets("AggChart")
     
@@ -26,12 +27,24 @@ Sub DeleteAllImages(ByVal singleWell As Integer)
                 sh.Delete
             End If
         Next sh
+    Else
+        For Each sh In ws.Shapes
+            If sh.Type = msoPicture Then
+                i = i + 1
+                If (i >= (singleWell - 1) * 3 + 1) And i <= ((singleWell - 1) * 3 + 3) Then
+                    sh.Delete
+                End If
+            End If
+        Next sh
     End If
     
 End Sub
 
+
+
 Sub WriteAllCharts(ByVal singleWell As Integer, ByVal isSingleWellImport As Boolean)
-'AggChart ChartImport
+' AggChart ChartImport
+' singleWell -> WellNumber
 
     Dim fName, source_name As String
     Dim nofwell, i As Integer
@@ -39,20 +52,14 @@ Sub WriteAllCharts(ByVal singleWell As Integer, ByVal isSingleWellImport As Bool
     nofwell = GetNumberOfWell()
     If ActiveSheet.name <> "AggChart" Then Sheets("AggChart").Select
     
-    ' Call DeleteAllCharts
     
-    Call TurnOffStuff
     If isSingleWellImport Then
         Call DeleteAllImages(singleWell)
     Else
         Call DeleteAllImages(999)
     End If
     
-    
     source_name = ActiveWorkbook.name
-    
-    
-    Call TurnOffStuff
     
     For i = 1 To nofwell
     
@@ -67,8 +74,6 @@ SINGLE_ITERATION:
         
 NEXT_ITERATION:
     Next i
-    
-    Call TurnOnStuff
 End Sub
 
 Sub Write_InsertChart(well As Integer, source_name As String)

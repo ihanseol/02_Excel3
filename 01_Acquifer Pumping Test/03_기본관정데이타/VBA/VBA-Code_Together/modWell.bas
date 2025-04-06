@@ -111,14 +111,21 @@ Sub PressAll_Button()
     Call modAggStep.WriteStepTestData(999, False)
     Sheets("AggStep").Visible = False
     
-    Call Popup_MessageBox("YangSoo, AggChart - Chart Import...")
-   
-    Sheets("AggChart").Visible = True
-    Sheets("AggChart").Select
-    Call modAggChart.WriteAllCharts(999, False)
-    Sheets("AggChart").Visible = False
+    
+   ' <><><><><> <><><><><> <><><><><> <><><><><> <><><><><> <><><><><> <><><><><> <><><><><>
+   ' Reduce OverHead,
+    
+     If Sheets("Well").CheckBox_GetChart.value Then
+         Call Popup_MessageBox("YangSoo, AggChart - Chart Import...")
         
-
+         Sheets("AggChart").Visible = True
+         Sheets("AggChart").Select
+         Call modAggChart.WriteAllCharts(999, False)
+         Sheets("AggChart").Visible = False
+    End If
+        
+    ' <><><><><> <><><><><> <><><><><> <><><><><> <><><><><> <><><><><> <><><><><> <><><><><>
+    
     Call Popup_MessageBox("Import All QT ...")
     Call modWell.ImportAll_QT
     
@@ -126,13 +133,47 @@ Sub PressAll_Button()
     Call modWell.ImportAll_EachWellSpec
     
     Call Popup_MessageBox("ImportWell MainWellPage ...")
-    Call modWell.ImportWell_MainWellPage
+    Call modWell.ImportWell_MainWellPage("_ALL_")
     
     Call Popup_MessageBox("Push Drastic Index ...")
     Call modWell.PushDrasticIndex
     
     
 
+End Sub
+
+
+Sub ImportSingleWell_Main(ByVal WellNumber As Integer)
+'
+' Just in case , Single Well Import
+' Action --> FX Sheet Press SingleWellImport, ImportMainWell Page Setting
+' 2024/4/7
+
+    ' Sub GetBaseDataFromYangSoo(ByVal singleWell As Integer, ByVal isSingleWellImport As Boolean)
+    Call Popup_MessageBox(" GetBaseDataFromYangSoo W-" & WellNumber)
+    Sheets("YangSoo").Activate
+    Call modAggFX_A.GetBaseDataFromYangSoo(WellNumber, True)
+    
+    
+    Call Popup_MessageBox(" ImportWell_MainWellPage W-" & WellNumber)
+    Sheets("Well").Activate
+    Call ImportWell_MainWellPage("_SINGLE_", WellNumber)
+        
+    If Sheets("Well").CheckBox_GetChart.value Then
+        Call Popup_MessageBox(" Import Charts W-" & WellNumber)
+        Sheets("AggChart").Activate
+        Call modAggChart.WriteAllCharts(WellNumber, True)
+        
+        Sheets("AggChart").Visible = False
+        Sheets("Well").Select
+    End If
+    
+    Call Popup_MessageBox("ImportAll Each Well Spec ...")
+    Call modWell.ImportAll_EachWellSpec
+    
+    Call Popup_MessageBox("Push Drastic Index ...")
+    Call modWell.PushDrasticIndex
+    
 End Sub
 
 
@@ -410,16 +451,47 @@ Sub ImportAll_EachWellSpec_OLD()
 End Sub
 
 
+Function AddressReducer(ByVal val_address As String) As String
+' Reduce Address
+' val --> Address String
+'
+
+    Dim Address, FinalAddress As String
+    Dim i As Integer
+    Dim AddressArray As Variant
+    
+        
+    Address = Replace(val_address, "번지", "")
+    Address = Replace(Address, "특별자치", "")
+    Address = Replace(Address, "광역", "")
+    AddressArray = Split(Address, " ")
+    
+    For i = 0 To UBound(AddressArray)
+        
+        If Right(AddressArray(i), 1) = "도" Then
+            GoTo NextIteration
+        Else
+            FinalAddress = FinalAddress & " " & AddressArray(i)
+        End If
+NextIteration:
+    Next i
+    
+    AddressReducer = FinalAddress
+    
+End Function
 
 
-Sub ImportWell_MainWellPage()
+Sub ImportWell_MainWellPage(Optional ByVal mode As String = "_ALL_", Optional ByVal WellNumber As Integer)
+'
+' mode = _SINGLE_
+' mode = _ALL_
 '
 ' import Sheets("Well") Page
 '
     Dim fName As String
     Dim nofwell, i, j, start_index   As Integer
     
-    Dim Address, Company, FinalAddress As String
+    Dim Address, AddressValue, Company, FinalAddress As String
     Dim address_array As Variant
     Dim simdo, diameter, Q, Hp As Double
     
@@ -435,45 +507,52 @@ Sub ImportWell_MainWellPage()
     wsWell.Range("D1").value = wsYangSoo.Cells(5, "AR").value
     
     Call TurnOffStuff
-           
-    For i = 1 To nofwell
-        '2025/3/5
-        Address = Replace(wsYangSoo.Cells(4 + i, "ao").value, "충청남도 ", "")
-        Address = Replace(Address, "번지", "")
-        
-        address_aray = Split(Address, " ")
-        
-        For j = 0 To UBound(address_aray)
+               
+    If mode = "_ALL_" Then
+        For i = 1 To nofwell
+            '2025/3/5
+            AddressValue = wsYangSoo.Cells(4 + i, "ao").value
+            FinalAddress = AddressReducer(AddressValue)
             
-            If Right(address_aray(j), 1) = "도" Then
-                GoTo NextIteration
-            Else
-                FinalAddress = FinalAddress & " " & address_aray(j)
-            End If
-NextIteration:
-        Next j
+            simdo = wsYangSoo.Cells(4 + i, "i").value
+            diameter = wsYangSoo.Cells(4 + i, "g").value
+            Q = wsYangSoo.Cells(4 + i, "k").value
+            Hp = wsYangSoo.Cells(4 + i, "m").value
+            
+            wsWell.Cells(3 + i, "d").value = FinalAddress
+            wsWell.Cells(3 + i, "g").value = diameter
+            wsWell.Cells(3 + i, "h").value = simdo
+            wsWell.Cells(3 + i, "i").value = Q
+            wsWell.Cells(3 + i, "j").value = Q
+            wsWell.Cells(3 + i, "l").value = Hp
+        Next i
         
-        simdo = wsYangSoo.Cells(4 + i, "i").value
-        diameter = wsYangSoo.Cells(4 + i, "g").value
-        Q = wsYangSoo.Cells(4 + i, "k").value
-        Hp = wsYangSoo.Cells(4 + i, "m").value
+        Company = wsYangSoo.Range("AP5").value
+    Else
+        ' SingleWell Import, MainWellPage
+        AddressValue = wsYangSoo.Cells(4 + WellNumber, "ao").value
+        FinalAddress = AddressReducer(AddressValue)
         
-        wsWell.Cells(3 + i, "d").value = FinalAddress
-        wsWell.Cells(3 + i, "g").value = diameter
-        wsWell.Cells(3 + i, "h").value = simdo
-        wsWell.Cells(3 + i, "i").value = Q
-        wsWell.Cells(3 + i, "j").value = Q
-        wsWell.Cells(3 + i, "l").value = Hp
-    Next i
-
+        simdo = wsYangSoo.Cells(4 + WellNumber, "i").value
+        diameter = wsYangSoo.Cells(4 + WellNumber, "g").value
+        Q = wsYangSoo.Cells(4 + WellNumber, "k").value
+        Hp = wsYangSoo.Cells(4 + WellNumber, "m").value
+        
+        wsWell.Cells(3 + WellNumber, "d").value = FinalAddress
+        wsWell.Cells(3 + WellNumber, "g").value = diameter
+        wsWell.Cells(3 + WellNumber, "h").value = simdo
+        wsWell.Cells(3 + WellNumber, "i").value = Q
+        wsWell.Cells(3 + WellNumber, "j").value = Q
+        wsWell.Cells(3 + WellNumber, "l").value = Hp
     
-    Company = wsYangSoo.Range("AP5").value
+        Company = wsYangSoo.Range("AP" & (4 + WellNumber)).value
+    End If
+
     wsRecharge.Range("B32").value = Company
     
     Application.CutCopyMode = False
     Call TurnOnStuff
 End Sub
-
 
 
 

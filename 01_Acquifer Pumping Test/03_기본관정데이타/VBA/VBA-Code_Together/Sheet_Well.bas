@@ -4,6 +4,27 @@ Private Sub CommandButton_PressAll_Click()
     Call PressAll_Button
 End Sub
 
+Private Sub CommandButton_SingleMain_Click()
+' SingleWell Import
+' Open FX Sheet, SingleWell Import, ImportMainWellPage
+
+   
+    Dim WellNumber  As Integer
+    Dim WB_NAME As String
+    
+    WB_NAME = BaseData_ETC.GetOtherFileName
+    
+    If WB_NAME = "Empty" Then
+        MsgBox "WorkBook is Empty"
+        Exit Sub
+    Else
+        WellNumber = CInt(ExtractNumberFromString(WB_NAME))
+    '   MsgBox (WellNumber)
+    End If
+    
+    Call modWell.ImportSingleWell_Main(WellNumber)
+End Sub
+
 Private Sub CommandButton1_Click()
 ' add well
 

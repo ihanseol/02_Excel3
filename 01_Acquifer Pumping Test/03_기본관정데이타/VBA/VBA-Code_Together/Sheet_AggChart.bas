@@ -44,7 +44,9 @@ Private Sub CommandButton3_Click()
     '   MsgBox (SingleWell)
     End If
     
-    Call WriteAllCharts(singleWell, True)
+    Call TurnOffStuff
+    Call modAggChart.WriteAllCharts(singleWell, True)
+    Call TurnOnStuff
 
 End Sub
 

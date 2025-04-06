@@ -334,7 +334,7 @@ End Sub
 
 
 
-Sub FormulaSkinFactorAndER(ByVal Mode As String, ByVal FileNum As Integer)
+Sub FormulaSkinFactorAndER(ByVal mode As String, ByVal FileNum As Integer)
     Dim formula1, formula2 As String
     Dim nofwell As Integer
     Dim i As Integer
@@ -396,7 +396,7 @@ Sub FormulaSkinFactorAndER(ByVal Mode As String, ByVal FileNum As Integer)
         End Select
         
         
-        If Mode = "SKIN" Then
+        If mode = "SKIN" Then
             Debug.Print formula1
             Debug.Print "-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------"
             
@@ -491,7 +491,7 @@ End Sub
 
 
 
-Sub FormulaSUB_ROI(Mode As String, FileNum As Integer)
+Sub FormulaSUB_ROI(mode As String, FileNum As Integer)
   Dim formula1, formula2, formula3 As String
     ' ½¶Ã÷, ¿þ¹ö, Á¦ÀÌÄß
     
@@ -532,7 +532,7 @@ Sub FormulaSUB_ROI(Mode As String, FileNum As Integer)
         formula3 = "W-" & i & "È£°ø~~r _{0(W-" & i & ")} `=~ sqrt {{2.25 TIMES  " & T & " TIMES  " & time_ & "} over {" & S & "}} `=~" & Jacob & "m"
         
         
-        Select Case Mode
+        Select Case mode
             Case "SCHULTZE"
                 Debug.Print formula1
                 Print #FileNum, formula1

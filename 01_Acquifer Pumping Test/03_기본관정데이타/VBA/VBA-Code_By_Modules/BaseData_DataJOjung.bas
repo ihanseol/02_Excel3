@@ -252,7 +252,7 @@ Sub JojungData(ByVal nsheet As Integer)
 End Sub
 
 Sub SetMyTabColor(ByVal index As Integer)
-    If Sheets("Well").SingleColor.value Then
+    If Sheets("Well").CheckBox_SingleColor.value Then
         With ActiveWorkbook.Sheets(CStr(index)).Tab
             .color = 192
             .TintAndShade = 0

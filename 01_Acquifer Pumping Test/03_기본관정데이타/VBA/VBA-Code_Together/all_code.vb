@@ -1,7 +1,8 @@
 
 Private Sub Workbook_Open()
     Call InitialSetColorValue
-    Sheets("Well").SingleColor.value = True
+    Sheets("Well").CheckBox_SingleColor.value = True
+    Sheets("Well").CheckBox_GetChart.value = True
     Sheets("Recharge").cbCheSoo.value = True
 End Sub
 
@@ -158,6 +159,27 @@ Option Explicit
 
 Private Sub CommandButton_PressAll_Click()
     Call PressAll_Button
+End Sub
+
+Private Sub CommandButton_SingleMain_Click()
+' SingleWell Import
+' Open FX Sheet, SingleWell Import, ImportMainWellPage
+
+   
+    Dim WellNumber  As Integer
+    Dim WB_NAME As String
+    
+    WB_NAME = BaseData_ETC.GetOtherFileName
+    
+    If WB_NAME = "Empty" Then
+        MsgBox "WorkBook is Empty"
+        Exit Sub
+    Else
+        WellNumber = CInt(ExtractNumberFromString(WB_NAME))
+    '   MsgBox (WellNumber)
+    End If
+    
+    Call modWell.ImportSingleWell_Main(WellNumber)
 End Sub
 
 Private Sub CommandButton1_Click()
@@ -2901,6 +2923,14 @@ Function GetOtherFileName() As String
 
     workbookNames = ""
     
+    ' 2024,4,7
+    ' if YanSoo Workbook is not single then exit function
+    '
+    If Application.Workbooks.count <> 2 Then
+        GetOtherFileName = "Empty"
+        Exit Function
+    End If
+    
     For Each Workbook In Application.Workbooks
         If StrComp(ThisWorkbook.name, Workbook.name, vbTextCompare) = 0 Then
             GoTo NEXT_ITERATION
@@ -3300,7 +3330,7 @@ Sub JojungData(ByVal nsheet As Integer)
 End Sub
 
 Sub SetMyTabColor(ByVal index As Integer)
-    If Sheets("Well").SingleColor.value Then
+    If Sheets("Well").CheckBox_SingleColor.value Then
         With ActiveWorkbook.Sheets(CStr(index)).Tab
             .color = 192
             .TintAndShade = 0
@@ -3775,7 +3805,9 @@ Private Sub CommandButton3_Click()
     '   MsgBox (SingleWell)
     End If
     
-    Call WriteAllCharts(singleWell, True)
+    Call TurnOffStuff
+    Call modAggChart.WriteAllCharts(singleWell, True)
+    Call TurnOnStuff
 
 End Sub
 
@@ -3801,6 +3833,7 @@ End Sub
 Sub DeleteAllImages(ByVal singleWell As Integer)
     Dim ws As Worksheet
     Dim sh As Shape
+    Dim i, remainder As Integer
     
     Set ws = ThisWorkbook.Worksheets("AggChart")
     
@@ -3810,12 +3843,24 @@ Sub DeleteAllImages(ByVal singleWell As Integer)
                 sh.Delete
             End If
         Next sh
+    Else
+        For Each sh In ws.Shapes
+            If sh.Type = msoPicture Then
+                i = i + 1
+                If (i >= (singleWell - 1) * 3 + 1) And i <= ((singleWell - 1) * 3 + 3) Then
+                    sh.Delete
+                End If
+            End If
+        Next sh
     End If
     
 End Sub
 
+
+
 Sub WriteAllCharts(ByVal singleWell As Integer, ByVal isSingleWellImport As Boolean)
-'AggChart ChartImport
+' AggChart ChartImport
+' singleWell -> WellNumber
 
     Dim fName, source_name As String
     Dim nofwell, i As Integer
@@ -3823,20 +3868,14 @@ Sub WriteAllCharts(ByVal singleWell As Integer, ByVal isSingleWellImport As Bool
     nofwell = GetNumberOfWell()
     If ActiveSheet.name <> "AggChart" Then Sheets("AggChart").Select
     
-    ' Call DeleteAllCharts
     
-    Call TurnOffStuff
     If isSingleWellImport Then
         Call DeleteAllImages(singleWell)
     Else
         Call DeleteAllImages(999)
     End If
     
-    
     source_name = ActiveWorkbook.name
-    
-    
-    Call TurnOffStuff
     
     For i = 1 To nofwell
     
@@ -3851,8 +3890,6 @@ SINGLE_ITERATION:
         
 NEXT_ITERATION:
     Next i
-    
-    Call TurnOnStuff
 End Sub
 
 Sub Write_InsertChart(well As Integer, source_name As String)
@@ -3920,14 +3957,7 @@ End Sub
 
 
 
-Private Sub CommandButton1_Click()
-'Hide Aggregate
-
-    Sheets("YangSoo").Visible = False
-    Sheets("Well").Select
-End Sub
-
-Private Sub CommandButton2_Click()
+Private Sub CommandButton_CollectData_Click()
   'Collect Data
     Dim fName As String
     
@@ -3942,46 +3972,48 @@ Private Sub CommandButton2_Click()
     Call TurnOnStuff
 End Sub
 
-
-Private Sub CommandButton3_Click()
+Private Sub CommandButton_Formula_Click()
     ' Write Formula Button
        
        Call WriteFormula
     ' End of Write Formula Button
 End Sub
 
+Private Sub CommandButton_HideSheet_Click()
+'Hide YangSoo
 
-Private Sub CommandButton4_Click()
+    Sheets("YangSoo").Visible = False
+    Sheets("Well").Select
+End Sub
+
+Private Sub CommandButton_SingleWell_Import_Click()
     'single well import
     
     Dim WellNumber  As Integer
     Dim WB_NAME As String
     
-    
     ' 영수시험 데이터 파일이름, 불러오기
     WB_NAME = BaseData_ETC.GetOtherFileName
     
-    'MsgBox WB_NAME
-        
-    'If Workbook Is Nothing Then
-    '    GetOtherFileName = "Empty"
-    'Else
-    '    GetOtherFileName = Workbook.name
-    'End If
-        
     If WB_NAME = "Empty" Then
         MsgBox "WorkBook is Empty"
         Exit Sub
     Else
         WellNumber = CInt(ExtractNumberFromString(WB_NAME))
-    '   MsgBox (SingleWell)
+    '   MsgBox (WellNumber)
     End If
     
-    Call GetBaseDataFromYangSoo(WellNumber, True)
+    ' Sub GetBaseDataFromYangSoo(ByVal singleWell As Integer, ByVal isSingleWellImport As Boolean)
+    Call modAggFX_A.GetBaseDataFromYangSoo(WellNumber, True)
 
 End Sub
 
 
+
+
+'
+'<><>><><><><><><>><><><><><><>><><><><><><>><><><><><><>><><><><><><>><><><><><><>><><><><><><>><><><><><><>><><><><>
+'
 
 
 
@@ -12027,14 +12059,21 @@ Sub PressAll_Button()
     Call modAggStep.WriteStepTestData(999, False)
     Sheets("AggStep").Visible = False
     
-    Call Popup_MessageBox("YangSoo, AggChart - Chart Import...")
-   
-    Sheets("AggChart").Visible = True
-    Sheets("AggChart").Select
-    Call modAggChart.WriteAllCharts(999, False)
-    Sheets("AggChart").Visible = False
+    
+   ' <><><><><> <><><><><> <><><><><> <><><><><> <><><><><> <><><><><> <><><><><> <><><><><>
+   ' Reduce OverHead,
+    
+     If Sheets("Well").CheckBox_GetChart.value Then
+         Call Popup_MessageBox("YangSoo, AggChart - Chart Import...")
         
-
+         Sheets("AggChart").Visible = True
+         Sheets("AggChart").Select
+         Call modAggChart.WriteAllCharts(999, False)
+         Sheets("AggChart").Visible = False
+    End If
+        
+    ' <><><><><> <><><><><> <><><><><> <><><><><> <><><><><> <><><><><> <><><><><> <><><><><>
+    
     Call Popup_MessageBox("Import All QT ...")
     Call modWell.ImportAll_QT
     
@@ -12042,13 +12081,47 @@ Sub PressAll_Button()
     Call modWell.ImportAll_EachWellSpec
     
     Call Popup_MessageBox("ImportWell MainWellPage ...")
-    Call modWell.ImportWell_MainWellPage
+    Call modWell.ImportWell_MainWellPage("_ALL_")
     
     Call Popup_MessageBox("Push Drastic Index ...")
     Call modWell.PushDrasticIndex
     
     
 
+End Sub
+
+
+Sub ImportSingleWell_Main(ByVal WellNumber As Integer)
+'
+' Just in case , Single Well Import
+' Action --> FX Sheet Press SingleWellImport, ImportMainWell Page Setting
+' 2024/4/7
+
+    ' Sub GetBaseDataFromYangSoo(ByVal singleWell As Integer, ByVal isSingleWellImport As Boolean)
+    Call Popup_MessageBox(" GetBaseDataFromYangSoo W-" & WellNumber)
+    Sheets("YangSoo").Activate
+    Call modAggFX_A.GetBaseDataFromYangSoo(WellNumber, True)
+    
+    
+    Call Popup_MessageBox(" ImportWell_MainWellPage W-" & WellNumber)
+    Sheets("Well").Activate
+    Call ImportWell_MainWellPage("_SINGLE_", WellNumber)
+        
+    If Sheets("Well").CheckBox_GetChart.value Then
+        Call Popup_MessageBox(" Import Charts W-" & WellNumber)
+        Sheets("AggChart").Activate
+        Call modAggChart.WriteAllCharts(WellNumber, True)
+        
+        Sheets("AggChart").Visible = False
+        Sheets("Well").Select
+    End If
+    
+    Call Popup_MessageBox("ImportAll Each Well Spec ...")
+    Call modWell.ImportAll_EachWellSpec
+    
+    Call Popup_MessageBox("Push Drastic Index ...")
+    Call modWell.PushDrasticIndex
+    
 End Sub
 
 
@@ -12326,16 +12399,47 @@ Sub ImportAll_EachWellSpec_OLD()
 End Sub
 
 
+Function AddressReducer(ByVal val_address As String) As String
+' Reduce Address
+' val --> Address String
+'
+
+    Dim Address, FinalAddress As String
+    Dim i As Integer
+    Dim AddressArray As Variant
+    
+        
+    Address = Replace(val_address, "번지", "")
+    Address = Replace(Address, "특별자치", "")
+    Address = Replace(Address, "광역", "")
+    AddressArray = Split(Address, " ")
+    
+    For i = 0 To UBound(AddressArray)
+        
+        If Right(AddressArray(i), 1) = "도" Then
+            GoTo NextIteration
+        Else
+            FinalAddress = FinalAddress & " " & AddressArray(i)
+        End If
+NextIteration:
+    Next i
+    
+    AddressReducer = FinalAddress
+    
+End Function
 
 
-Sub ImportWell_MainWellPage()
+Sub ImportWell_MainWellPage(Optional ByVal mode As String = "_ALL_", Optional ByVal WellNumber As Integer)
+'
+' mode = _SINGLE_
+' mode = _ALL_
 '
 ' import Sheets("Well") Page
 '
     Dim fName As String
     Dim nofwell, i, j, start_index   As Integer
     
-    Dim Address, Company, FinalAddress As String
+    Dim Address, AddressValue, Company, FinalAddress As String
     Dim address_array As Variant
     Dim simdo, diameter, Q, Hp As Double
     
@@ -12351,45 +12455,52 @@ Sub ImportWell_MainWellPage()
     wsWell.Range("D1").value = wsYangSoo.Cells(5, "AR").value
     
     Call TurnOffStuff
-           
-    For i = 1 To nofwell
-        '2025/3/5
-        Address = Replace(wsYangSoo.Cells(4 + i, "ao").value, "충청남도 ", "")
-        Address = Replace(Address, "번지", "")
-        
-        address_aray = Split(Address, " ")
-        
-        For j = 0 To UBound(address_aray)
+               
+    If mode = "_ALL_" Then
+        For i = 1 To nofwell
+            '2025/3/5
+            AddressValue = wsYangSoo.Cells(4 + i, "ao").value
+            FinalAddress = AddressReducer(AddressValue)
             
-            If Right(address_aray(j), 1) = "도" Then
-                GoTo NextIteration
-            Else
-                FinalAddress = FinalAddress & " " & address_aray(j)
-            End If
-NextIteration:
-        Next j
+            simdo = wsYangSoo.Cells(4 + i, "i").value
+            diameter = wsYangSoo.Cells(4 + i, "g").value
+            Q = wsYangSoo.Cells(4 + i, "k").value
+            Hp = wsYangSoo.Cells(4 + i, "m").value
+            
+            wsWell.Cells(3 + i, "d").value = FinalAddress
+            wsWell.Cells(3 + i, "g").value = diameter
+            wsWell.Cells(3 + i, "h").value = simdo
+            wsWell.Cells(3 + i, "i").value = Q
+            wsWell.Cells(3 + i, "j").value = Q
+            wsWell.Cells(3 + i, "l").value = Hp
+        Next i
         
-        simdo = wsYangSoo.Cells(4 + i, "i").value
-        diameter = wsYangSoo.Cells(4 + i, "g").value
-        Q = wsYangSoo.Cells(4 + i, "k").value
-        Hp = wsYangSoo.Cells(4 + i, "m").value
+        Company = wsYangSoo.Range("AP5").value
+    Else
+        ' SingleWell Import, MainWellPage
+        AddressValue = wsYangSoo.Cells(4 + WellNumber, "ao").value
+        FinalAddress = AddressReducer(AddressValue)
         
-        wsWell.Cells(3 + i, "d").value = FinalAddress
-        wsWell.Cells(3 + i, "g").value = diameter
-        wsWell.Cells(3 + i, "h").value = simdo
-        wsWell.Cells(3 + i, "i").value = Q
-        wsWell.Cells(3 + i, "j").value = Q
-        wsWell.Cells(3 + i, "l").value = Hp
-    Next i
-
+        simdo = wsYangSoo.Cells(4 + WellNumber, "i").value
+        diameter = wsYangSoo.Cells(4 + WellNumber, "g").value
+        Q = wsYangSoo.Cells(4 + WellNumber, "k").value
+        Hp = wsYangSoo.Cells(4 + WellNumber, "m").value
+        
+        wsWell.Cells(3 + WellNumber, "d").value = FinalAddress
+        wsWell.Cells(3 + WellNumber, "g").value = diameter
+        wsWell.Cells(3 + WellNumber, "h").value = simdo
+        wsWell.Cells(3 + WellNumber, "i").value = Q
+        wsWell.Cells(3 + WellNumber, "j").value = Q
+        wsWell.Cells(3 + WellNumber, "l").value = Hp
     
-    Company = wsYangSoo.Range("AP5").value
+        Company = wsYangSoo.Range("AP" & (4 + WellNumber)).value
+    End If
+
     wsRecharge.Range("B32").value = Company
     
     Application.CutCopyMode = False
     Call TurnOnStuff
 End Sub
-
 
 
 
@@ -12850,7 +12961,7 @@ End Sub
 
 
 
-Sub FXSAVE_FormulaSkinFactorAndER(ByVal Mode As String, ByVal FileNum As Integer)
+Sub FXSAVE_FormulaSkinFactorAndER(ByVal mode As String, ByVal FileNum As Integer)
     Dim formula1, formula2 As String
     Dim nofwell As Integer
     Dim i As Integer
@@ -12912,7 +13023,7 @@ Sub FXSAVE_FormulaSkinFactorAndER(ByVal Mode As String, ByVal FileNum As Integer
         End Select
 
 
-        If Mode = "SKIN" Then
+        If mode = "SKIN" Then
             Debug.Print formula1
             Debug.Print "-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------"
 
@@ -13007,7 +13118,7 @@ End Sub
 
 
 
-Sub FXSAVE_FormulaSUB_ROI(Mode As String, FileNum As Integer)
+Sub FXSAVE_FormulaSUB_ROI(mode As String, FileNum As Integer)
   Dim formula1, formula2, formula3 As String
     ' 슐츠, 웨버, 제이콥
 
@@ -13048,7 +13159,7 @@ Sub FXSAVE_FormulaSUB_ROI(Mode As String, FileNum As Integer)
         formula3 = "W-" & i & "호공~~r _{0(W-" & i & ")} `=~ sqrt {{2.25 TIMES  " & T & " TIMES  " & time_ & "} over {" & S & "}} `=~" & Jacob & "m"
 
 
-        Select Case Mode
+        Select Case mode
             Case "SCHULTZE"
                 Debug.Print formula1
                 Print #FileNum, formula1
@@ -15626,7 +15737,7 @@ End Sub
 
 
 
-Sub FormulaSkinFactorAndER(ByVal Mode As String, ByVal FileNum As Integer)
+Sub FormulaSkinFactorAndER(ByVal mode As String, ByVal FileNum As Integer)
     Dim formula1, formula2 As String
     Dim nofwell As Integer
     Dim i As Integer
@@ -15688,7 +15799,7 @@ Sub FormulaSkinFactorAndER(ByVal Mode As String, ByVal FileNum As Integer)
         End Select
         
         
-        If Mode = "SKIN" Then
+        If mode = "SKIN" Then
             Debug.Print formula1
             Debug.Print "-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------"
             
@@ -15783,7 +15894,7 @@ End Sub
 
 
 
-Sub FormulaSUB_ROI(Mode As String, FileNum As Integer)
+Sub FormulaSUB_ROI(mode As String, FileNum As Integer)
   Dim formula1, formula2, formula3 As String
     ' 슐츠, 웨버, 제이콥
     
@@ -15824,7 +15935,7 @@ Sub FormulaSUB_ROI(Mode As String, FileNum As Integer)
         formula3 = "W-" & i & "호공~~r _{0(W-" & i & ")} `=~ sqrt {{2.25 TIMES  " & T & " TIMES  " & time_ & "} over {" & S & "}} `=~" & Jacob & "m"
         
         
-        Select Case Mode
+        Select Case mode
             Case "SCHULTZE"
                 Debug.Print formula1
                 Print #FileNum, formula1
@@ -15850,5 +15961,293 @@ End Sub
 
 
 
+
+
+
+Private Sub CommandButton4_Click()
+    Call delete_allWhpaData
+End Sub
+
+
+
+Private Sub CommandButton2_Click()
+    Call TurnOffStuff
+    Call main_drasticindex
+    Call print_drastic_string
+    Call TurnOnStuff
+End Sub
+
+Private Sub CommandButton3_Click()
+    Call getWhpaData_AllWell
+End Sub
+
+Private Sub CommandButton7_Click()
+   Call getWhpaData_EachWell
+End Sub
+
+
+
+Private Sub CommandButton5_Click()
+    Call BaseData_DrasticIndex.ToggleDirection
+End Sub
+
+
+Private Function get_rf_number() As String
+    Dim rf_num As String
+
+    '=(max*rf_1*E17/1000)
+    get_rf_number = VBA.Mid(Range("F17").formula, 10, 1)
+
+End Function
+
+
+Private Sub Set_RechargeFactor_One()
+
+    Range("F17").formula = "=(max*rf_1*E17/1000)"
+    Range("F19").formula = "=(max*rf_1*E19/1000)/365"
+    
+    Range("G17").formula = "=F17*allow_ratio"
+    Range("G19").formula = "=F19*allow_ratio"
+    
+    Range("E13").formula = "=Recharge!I24"
+    Range("F13").formula = "=rf_1"
+    Range("G13").formula = "=allow_ratio"
+    
+    Range("E26").formula = "=Recharge!C30"
+    
+End Sub
+
+Private Sub Set_RechargeFactor_Two()
+
+    Range("F17").formula = "=(max*rf_2*E17/1000)"
+    Range("F19").formula = "=(max*rf_2*E19/1000)/365"
+    
+    Range("G17").formula = "=F17*allow_ratio2"
+    Range("G19").formula = "=F19*allow_ratio2"
+    
+    
+    Range("E13").formula = "=Recharge!I25"
+    Range("F13").formula = "=rf_2"
+    Range("G13").formula = "=allow_ratio2"
+    
+    
+    Range("E26").formula = "=Recharge!D30"
+End Sub
+
+
+Private Sub Set_RechargeFactor_Three()
+
+    Range("F17").formula = "=(max*rf_3*E17/1000)"
+    Range("F19").formula = "=(max*rf_3*E19/1000)/365"
+    
+    Range("G17").formula = "=F17*allow_ratio3"
+    Range("G19").formula = "=F19*allow_ratio3"
+    
+    Range("E13").formula = "=Recharge!I26"
+    Range("F13").formula = "=rf_3"
+    Range("G13").formula = "=allow_ratio3"
+    
+    Range("E26").formula = "=Recharge!E30"
+    
+End Sub
+
+
+
+Private Sub CommandButton6_Click()
+'Select Recharge Factor
+
+    
+   If Frame1.Controls("optionbutton1").value = True Then
+        Call Set_RechargeFactor_One
+   End If
+    
+   If Frame1.Controls("optionbutton2").value = True Then
+        Call Set_RechargeFactor_Two
+   End If
+    
+   If Frame1.Controls("optionbutton3").value = True Then
+        Call Set_RechargeFactor_Three
+   End If
+    
+
+End Sub
+
+
+
+' 2022/6/9 Import YangSoo Data
+' Radius of Influence - 양수영향반경
+' Effective Radius - 유효우물반경
+' 2024/6/7 - 스킨계수 추가해줌 ...
+' 2024/7/9 - 관정별 임포트 해오는것을, FX 에서 가져온다.
+
+Private Sub CommandButton8_Click()
+   
+   Call modWell_Each.ImportEachWell(Range("E15").value)
+        
+End Sub
+
+Private Sub Worksheet_Activate()
+
+    Select Case get_rf_number
+    
+        Case "1"
+             Frame1.Controls("optionbutton1").value = True
+             
+        Case "2"
+             Frame1.Controls("optionbutton2").value = True
+             
+        Case "3"
+             Frame1.Controls("optionbutton3").value = True
+             
+        Case Else
+            Frame1.Controls("optionbutton1").value = True
+           
+    End Select
+
+End Sub
+
+
+
+Private Sub CommandButton4_Click()
+    Call delete_allWhpaData
+End Sub
+
+
+
+Private Sub CommandButton2_Click()
+    Call TurnOffStuff
+    Call main_drasticindex
+    Call print_drastic_string
+    Call TurnOnStuff
+End Sub
+
+Private Sub CommandButton3_Click()
+    Call getWhpaData_AllWell
+End Sub
+
+Private Sub CommandButton7_Click()
+   Call getWhpaData_EachWell
+End Sub
+
+
+
+Private Sub CommandButton5_Click()
+    Call BaseData_DrasticIndex.ToggleDirection
+End Sub
+
+
+Private Function get_rf_number() As String
+    Dim rf_num As String
+
+    '=(max*rf_1*E17/1000)
+    get_rf_number = VBA.Mid(Range("F17").formula, 10, 1)
+
+End Function
+
+
+Private Sub Set_RechargeFactor_One()
+
+    Range("F17").formula = "=(max*rf_1*E17/1000)"
+    Range("F19").formula = "=(max*rf_1*E19/1000)/365"
+    
+    Range("G17").formula = "=F17*allow_ratio"
+    Range("G19").formula = "=F19*allow_ratio"
+    
+    Range("E13").formula = "=Recharge!I24"
+    Range("F13").formula = "=rf_1"
+    Range("G13").formula = "=allow_ratio"
+    
+    Range("E26").formula = "=Recharge!C30"
+    
+End Sub
+
+Private Sub Set_RechargeFactor_Two()
+
+    Range("F17").formula = "=(max*rf_2*E17/1000)"
+    Range("F19").formula = "=(max*rf_2*E19/1000)/365"
+    
+    Range("G17").formula = "=F17*allow_ratio2"
+    Range("G19").formula = "=F19*allow_ratio2"
+    
+    
+    Range("E13").formula = "=Recharge!I25"
+    Range("F13").formula = "=rf_2"
+    Range("G13").formula = "=allow_ratio2"
+    
+    
+    Range("E26").formula = "=Recharge!D30"
+End Sub
+
+
+Private Sub Set_RechargeFactor_Three()
+
+    Range("F17").formula = "=(max*rf_3*E17/1000)"
+    Range("F19").formula = "=(max*rf_3*E19/1000)/365"
+    
+    Range("G17").formula = "=F17*allow_ratio3"
+    Range("G19").formula = "=F19*allow_ratio3"
+    
+    Range("E13").formula = "=Recharge!I26"
+    Range("F13").formula = "=rf_3"
+    Range("G13").formula = "=allow_ratio3"
+    
+    Range("E26").formula = "=Recharge!E30"
+    
+End Sub
+
+
+
+Private Sub CommandButton6_Click()
+'Select Recharge Factor
+
+    
+   If Frame1.Controls("optionbutton1").value = True Then
+        Call Set_RechargeFactor_One
+   End If
+    
+   If Frame1.Controls("optionbutton2").value = True Then
+        Call Set_RechargeFactor_Two
+   End If
+    
+   If Frame1.Controls("optionbutton3").value = True Then
+        Call Set_RechargeFactor_Three
+   End If
+    
+
+End Sub
+
+
+
+' 2022/6/9 Import YangSoo Data
+' Radius of Influence - 양수영향반경
+' Effective Radius - 유효우물반경
+' 2024/6/7 - 스킨계수 추가해줌 ...
+' 2024/7/9 - 관정별 임포트 해오는것을, FX 에서 가져온다.
+
+Private Sub CommandButton8_Click()
+   
+   Call modWell_Each.ImportEachWell(Range("E15").value)
+        
+End Sub
+
+Private Sub Worksheet_Activate()
+
+    Select Case get_rf_number
+    
+        Case "1"
+             Frame1.Controls("optionbutton1").value = True
+             
+        Case "2"
+             Frame1.Controls("optionbutton2").value = True
+             
+        Case "3"
+             Frame1.Controls("optionbutton3").value = True
+             
+        Case Else
+            Frame1.Controls("optionbutton1").value = True
+           
+    End Select
+
+End Sub
 
 

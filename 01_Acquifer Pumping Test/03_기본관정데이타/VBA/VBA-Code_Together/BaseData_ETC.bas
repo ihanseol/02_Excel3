@@ -171,6 +171,14 @@ Function GetOtherFileName() As String
 
     workbookNames = ""
     
+    ' 2024,4,7
+    ' if YanSoo Workbook is not single then exit function
+    '
+    If Application.Workbooks.count <> 2 Then
+        GetOtherFileName = "Empty"
+        Exit Function
+    End If
+    
     For Each Workbook In Application.Workbooks
         If StrComp(ThisWorkbook.name, Workbook.name, vbTextCompare) = 0 Then
             GoTo NEXT_ITERATION
