@@ -157,6 +157,86 @@ End Sub
 
 Option Explicit
 
+Private Sub CommandButton_AddWell_Click()
+    BaseData_ETC_02.TurnOffStuff
+    Call AddWell_CopyOneSheet
+    BaseData_ETC_02.TurnOnStuff
+End Sub
+
+Private Sub CommandButton_Agg1_Click()
+    Sheets("Aggregate1").Visible = True
+    Sheets("Aggregate1").Select
+End Sub
+
+Private Sub CommandButton_Agg2_Click()
+' Aggregate2 Button
+' 집계함수 2번
+
+    Sheets("Aggregate2").Visible = True
+    Sheets("Aggregate2").Select
+End Sub
+
+Private Sub CommandButton_Chart_Click()
+    Sheets("AggChart").Visible = True
+    Sheets("AggChart").Select
+End Sub
+
+Private Sub CommandButton_DeleteLast_Click()
+    Call DeleteLast
+End Sub
+
+Private Sub CommandButton_Duplicate_Click()
+' 2024/6/24 - dupl, duplicate basic well data ...
+' 기본관정데이타 복사하는것
+' 관정을 순회하면서, 거기에서 데이터를 가지고 오는데 …
+' 와파 , 장축부, 단축부
+' 유향, 거리, 관정높이, 지표수표고 이렇게 가지고 오면 될듯하다.
+
+' k6 - 장축부 / long axis
+' k7 - 단축부 / short axis
+' k12 - degree of flow
+' k13 - well distance
+' k14 - well height
+' k15 - surfacewater height
+
+    Call DuplicateBasicWellData
+End Sub
+
+Private Sub CommandButton_FX_Click()
+    Sheets("YangSoo").Visible = True
+    Sheets("YangSoo").Select
+End Sub
+
+Private Sub CommandButton_Step_Click()
+  Sheets("AggStep").Visible = True
+  Sheets("AggStep").Select
+End Sub
+
+Private Sub CommandButton_Summary_Click()
+    Sheets("AggSum").Visible = True
+    Sheets("AggSum").Select
+End Sub
+
+Private Sub CommandButton_Water_Click()
+    Sheets("water").Visible = True
+    Sheets("water").Select
+End Sub
+
+Private Sub CommandButton_Whpa_Click()
+    Sheets("aggWhpa").Visible = True
+    Sheets("aggWhpa").Select
+End Sub
+
+
+
+Private Sub CommandButton_Jojung_Click()
+    Call JojungButton
+End Sub
+
+Private Sub CommandButton_One_Click()
+   Call Make_OneButton
+End Sub
+
 Private Sub CommandButton_PressAll_Click()
     Call PressAll_Button
 End Sub
@@ -172,7 +252,7 @@ Private Sub CommandButton_SingleMain_Click()
     WB_NAME = BaseData_ETC.GetOtherFileName
     
     If WB_NAME = "Empty" Then
-        MsgBox "WorkBook is Empty"
+        MsgBox " SingleWell Import, YangSoo WorkBook must be One ... "
         Exit Sub
     Else
         WellNumber = CInt(ExtractNumberFromString(WB_NAME))
@@ -180,34 +260,6 @@ Private Sub CommandButton_SingleMain_Click()
     End If
     
     Call modWell.ImportSingleWell_Main(WellNumber)
-End Sub
-
-Private Sub CommandButton1_Click()
-' add well
-
-    BaseData_ETC_02.TurnOffStuff
-    Call AddWell_CopyOneSheet
-    BaseData_ETC_02.TurnOnStuff
-    
-End Sub
-
-
-'AggChart Button
-Private Sub CommandButton10_Click()
-    Sheets("AggChart").Visible = True
-    Sheets("AggChart").Select
-End Sub
-
-
-'AggFx Button
-Private Sub CommandButton11_Click()
-    Sheets("YangSoo").Visible = True
-    Sheets("YangSoo").Select
-End Sub
-
-Private Sub CommandButton12_Click()
-    Sheets("water").Visible = True
-    Sheets("water").Select
 End Sub
 
 Private Sub CommandButton13_Click()
@@ -234,86 +286,12 @@ Private Sub CommandButton14_Click()
     Next i
 End Sub
 
-Private Sub CommandButton15_Click()
-' 2024/6/24 - dupl, duplicate basic well data ...
-' 기본관정데이타 복사하는것
-' 관정을 순회하면서, 거기에서 데이터를 가지고 오는데 …
-' 와파 , 장축부, 단축부
-' 유향, 거리, 관정높이, 지표수표고 이렇게 가지고 오면 될듯하다.
-
-' k6 - 장축부 / long axis
-' k7 - 단축부 / short axis
-' k12 - degree of flow
-' k13 - well distance
-' k14 - well height
-' k15 - surfacewater height
-
-    Call DuplicateBasicWellData
-  
-End Sub
-
-'AggSum Button
-Private Sub CommandButton3_Click()
-    Sheets("AggSum").Visible = True
-    Sheets("AggSum").Select
-End Sub
 
 
-
-'Aggregate1 Button
-Private Sub CommandButton4_Click()
-    Sheets("Aggregate1").Visible = True
-    Sheets("Aggregate1").Select
-End Sub
-
-
-
-
-Private Sub CommandButton5_Click()
-' Aggregate2 Button
-' 집계함수 2번
-
-    Sheets("Aggregate2").Visible = True
-    Sheets("Aggregate2").Select
-End Sub
-
-
-'AggWhpa Button
-Private Sub CommandButton7_Click()
-    Sheets("aggWhpa").Visible = True
-    Sheets("aggWhpa").Select
-End Sub
-
-
-Private Sub CommandButton9_Click()
-  Sheets("AggStep").Visible = True
-  Sheets("AggStep").Select
-End Sub
-
-
-'Jojung Button
-'add new feature - correct border frame ...
-Private Sub CommandButton2_Click()
-    Call JojungButton
-End Sub
-
-
-
-' delete last
-Private Sub CommandButton8_Click()
-    Call DeleteLast
-End Sub
 
 Private Sub Worksheet_Activate()
     Call InitialSetColorValue
 End Sub
-
-'one button / delete all well except for one ...
-
-Private Sub CommandButton6_Click()
-   Call Make_OneButton
-End Sub
-
 
 
 
@@ -12107,6 +12085,8 @@ Sub ImportSingleWell_Main(ByVal WellNumber As Integer)
     Sheets("Well").Activate
     Call ImportWell_MainWellPage("_SINGLE_", WellNumber)
         
+    ' 2024/4/7 - is Import Chart YES
+    
     If Sheets("Well").CheckBox_GetChart.value Then
         Call Popup_MessageBox(" Import Charts W-" & WellNumber)
         Sheets("AggChart").Activate

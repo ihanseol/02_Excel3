@@ -160,6 +160,8 @@ Sub ImportSingleWell_Main(ByVal WellNumber As Integer)
     Sheets("Well").Activate
     Call ImportWell_MainWellPage("_SINGLE_", WellNumber)
         
+    ' 2024/4/7 - is Import Chart YES
+    
     If Sheets("Well").CheckBox_GetChart.value Then
         Call Popup_MessageBox(" Import Charts W-" & WellNumber)
         Sheets("AggChart").Activate
