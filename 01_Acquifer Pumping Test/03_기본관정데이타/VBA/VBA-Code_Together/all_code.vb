@@ -12422,6 +12422,8 @@ Sub ImportWell_MainWellPage(Optional ByVal mode As String = "_ALL_", Optional By
     Dim Address, AddressValue, Company, FinalAddress As String
     Dim address_array As Variant
     Dim simdo, diameter, Q, Hp As Double
+    ' 2025/4/9 - 펌프심도, 토출관, 양수능력 추가
+    Dim pump_simdo, tochul, pump_capa As Double
     
     nofwell = sheets_count()
     Sheets("Well").Select
@@ -12447,12 +12449,24 @@ Sub ImportWell_MainWellPage(Optional ByVal mode As String = "_ALL_", Optional By
             Q = wsYangSoo.Cells(4 + i, "k").value
             Hp = wsYangSoo.Cells(4 + i, "m").value
             
+            ' 2025/4/9 - 펌프심도, 토출관, 양수능력 추가
+            pump_simdo = wsYangSoo.Cells(4 + i, "as").value
+            tochul = wsYangSoo.Cells(4 + i, "at").value
+            pump_capa = wsYangSoo.Cells(4 + i, "au").value
+            
+            
             wsWell.Cells(3 + i, "d").value = FinalAddress
             wsWell.Cells(3 + i, "g").value = diameter
             wsWell.Cells(3 + i, "h").value = simdo
             wsWell.Cells(3 + i, "i").value = Q
             wsWell.Cells(3 + i, "j").value = Q
             wsWell.Cells(3 + i, "l").value = Hp
+            
+            ' 2025/4/9 - 펌프심도, 토출관, 양수능력 추가
+            wsWell.Cells(3 + i, "m").value = pump_simdo
+            wsWell.Cells(3 + i, "n").value = tochul
+            wsWell.Cells(3 + i, "k").value = pump_capa
+            
         Next i
         
         Company = wsYangSoo.Range("AP5").value
@@ -12466,12 +12480,23 @@ Sub ImportWell_MainWellPage(Optional ByVal mode As String = "_ALL_", Optional By
         Q = wsYangSoo.Cells(4 + WellNumber, "k").value
         Hp = wsYangSoo.Cells(4 + WellNumber, "m").value
         
+        ' 2025/4/9 - 펌프심도, 토출관, 양수능력 추가
+        pump_simdo = wsYangSoo.Cells(4 + WellNumber, "as").value
+        tochul = wsYangSoo.Cells(4 + WellNumber, "at").value
+        pump_capa = wsYangSoo.Cells(4 + WellNumber, "au").value
+            
+        
         wsWell.Cells(3 + WellNumber, "d").value = FinalAddress
         wsWell.Cells(3 + WellNumber, "g").value = diameter
         wsWell.Cells(3 + WellNumber, "h").value = simdo
         wsWell.Cells(3 + WellNumber, "i").value = Q
         wsWell.Cells(3 + WellNumber, "j").value = Q
         wsWell.Cells(3 + WellNumber, "l").value = Hp
+        
+        ' 2025/4/9 - 펌프심도, 토출관, 양수능력 추가
+        wsWell.Cells(3 + WellNumber, "m").value = pump_simdo
+        wsWell.Cells(3 + WellNumber, "n").value = tochul
+        wsWell.Cells(3 + WellNumber, "k").value = pump_capa
     
         Company = wsYangSoo.Range("AP" & (4 + WellNumber)).value
     End If
@@ -15411,7 +15436,7 @@ Private Type WellData
     TA As Double
     S1 As Double
     S2 As Double
-    
+        
     k As Double
     Time As Double
     
@@ -15443,6 +15468,11 @@ Private Type WellData
     
     S3 As Double
     Title As String
+    
+    pump_simdo As Double
+    tochul As Double
+    pump_capa As Double
+    
 End Type
 
 ' Main procedure using UDT
@@ -15457,9 +15487,9 @@ Sub GetBaseDataFromYangSoo(ByVal singleWell As Integer, ByVal isSingleWellImport
     Call TurnOffStuff
     ' Determine range to clear based on import type
     If Not isSingleWellImport And singleWell = 999 Then
-        rngString = "A5:AR37"
+        rngString = "A5:AU37"
     Else
-        rngString = "A" & (singleWell + 4) & ":AR" & (singleWell + 4)
+        rngString = "A" & (singleWell + 4) & ":AU" & (singleWell + 4)
     End If
     
     Call EraseCellData(rngString)
@@ -15556,10 +15586,14 @@ Private Function ImportDataForWell(ByVal wellIndex As Integer) As WellData
 
             .S3 = wsSkinFactor.Range("i13").value
             .Title = wsInput.Range("i44").value
+            
+            .pump_simdo = wsInput.Range("i50").value
+            .tochul = wsInput.Range("K50").value
+            .pump_capa = wsInput.Range("i51").value
         End With
     End With
 
-    
+  
     ImportDataForWell = well
 End Function
 
@@ -15625,6 +15659,11 @@ Private Sub SetWellDataToSheet(ByVal wellIndex As Integer, well As WellData)
         SetCellValue row, 42, .Company, ""
         SetCellValue row, 43, .S3, "0.00"
         SetCellValue row, 44, .Title, ""
+        
+        SetCellValue row, 45, .pump_simdo, "0"
+        SetCellValue row, 46, .tochul, "0"
+        SetCellValue row, 47, .pump_capa, "0"
+        
     End With
     
 End Sub
@@ -15941,293 +15980,5 @@ End Sub
 
 
 
-
-
-
-Private Sub CommandButton4_Click()
-    Call delete_allWhpaData
-End Sub
-
-
-
-Private Sub CommandButton2_Click()
-    Call TurnOffStuff
-    Call main_drasticindex
-    Call print_drastic_string
-    Call TurnOnStuff
-End Sub
-
-Private Sub CommandButton3_Click()
-    Call getWhpaData_AllWell
-End Sub
-
-Private Sub CommandButton7_Click()
-   Call getWhpaData_EachWell
-End Sub
-
-
-
-Private Sub CommandButton5_Click()
-    Call BaseData_DrasticIndex.ToggleDirection
-End Sub
-
-
-Private Function get_rf_number() As String
-    Dim rf_num As String
-
-    '=(max*rf_1*E17/1000)
-    get_rf_number = VBA.Mid(Range("F17").formula, 10, 1)
-
-End Function
-
-
-Private Sub Set_RechargeFactor_One()
-
-    Range("F17").formula = "=(max*rf_1*E17/1000)"
-    Range("F19").formula = "=(max*rf_1*E19/1000)/365"
-    
-    Range("G17").formula = "=F17*allow_ratio"
-    Range("G19").formula = "=F19*allow_ratio"
-    
-    Range("E13").formula = "=Recharge!I24"
-    Range("F13").formula = "=rf_1"
-    Range("G13").formula = "=allow_ratio"
-    
-    Range("E26").formula = "=Recharge!C30"
-    
-End Sub
-
-Private Sub Set_RechargeFactor_Two()
-
-    Range("F17").formula = "=(max*rf_2*E17/1000)"
-    Range("F19").formula = "=(max*rf_2*E19/1000)/365"
-    
-    Range("G17").formula = "=F17*allow_ratio2"
-    Range("G19").formula = "=F19*allow_ratio2"
-    
-    
-    Range("E13").formula = "=Recharge!I25"
-    Range("F13").formula = "=rf_2"
-    Range("G13").formula = "=allow_ratio2"
-    
-    
-    Range("E26").formula = "=Recharge!D30"
-End Sub
-
-
-Private Sub Set_RechargeFactor_Three()
-
-    Range("F17").formula = "=(max*rf_3*E17/1000)"
-    Range("F19").formula = "=(max*rf_3*E19/1000)/365"
-    
-    Range("G17").formula = "=F17*allow_ratio3"
-    Range("G19").formula = "=F19*allow_ratio3"
-    
-    Range("E13").formula = "=Recharge!I26"
-    Range("F13").formula = "=rf_3"
-    Range("G13").formula = "=allow_ratio3"
-    
-    Range("E26").formula = "=Recharge!E30"
-    
-End Sub
-
-
-
-Private Sub CommandButton6_Click()
-'Select Recharge Factor
-
-    
-   If Frame1.Controls("optionbutton1").value = True Then
-        Call Set_RechargeFactor_One
-   End If
-    
-   If Frame1.Controls("optionbutton2").value = True Then
-        Call Set_RechargeFactor_Two
-   End If
-    
-   If Frame1.Controls("optionbutton3").value = True Then
-        Call Set_RechargeFactor_Three
-   End If
-    
-
-End Sub
-
-
-
-' 2022/6/9 Import YangSoo Data
-' Radius of Influence - 양수영향반경
-' Effective Radius - 유효우물반경
-' 2024/6/7 - 스킨계수 추가해줌 ...
-' 2024/7/9 - 관정별 임포트 해오는것을, FX 에서 가져온다.
-
-Private Sub CommandButton8_Click()
-   
-   Call modWell_Each.ImportEachWell(Range("E15").value)
-        
-End Sub
-
-Private Sub Worksheet_Activate()
-
-    Select Case get_rf_number
-    
-        Case "1"
-             Frame1.Controls("optionbutton1").value = True
-             
-        Case "2"
-             Frame1.Controls("optionbutton2").value = True
-             
-        Case "3"
-             Frame1.Controls("optionbutton3").value = True
-             
-        Case Else
-            Frame1.Controls("optionbutton1").value = True
-           
-    End Select
-
-End Sub
-
-
-
-Private Sub CommandButton4_Click()
-    Call delete_allWhpaData
-End Sub
-
-
-
-Private Sub CommandButton2_Click()
-    Call TurnOffStuff
-    Call main_drasticindex
-    Call print_drastic_string
-    Call TurnOnStuff
-End Sub
-
-Private Sub CommandButton3_Click()
-    Call getWhpaData_AllWell
-End Sub
-
-Private Sub CommandButton7_Click()
-   Call getWhpaData_EachWell
-End Sub
-
-
-
-Private Sub CommandButton5_Click()
-    Call BaseData_DrasticIndex.ToggleDirection
-End Sub
-
-
-Private Function get_rf_number() As String
-    Dim rf_num As String
-
-    '=(max*rf_1*E17/1000)
-    get_rf_number = VBA.Mid(Range("F17").formula, 10, 1)
-
-End Function
-
-
-Private Sub Set_RechargeFactor_One()
-
-    Range("F17").formula = "=(max*rf_1*E17/1000)"
-    Range("F19").formula = "=(max*rf_1*E19/1000)/365"
-    
-    Range("G17").formula = "=F17*allow_ratio"
-    Range("G19").formula = "=F19*allow_ratio"
-    
-    Range("E13").formula = "=Recharge!I24"
-    Range("F13").formula = "=rf_1"
-    Range("G13").formula = "=allow_ratio"
-    
-    Range("E26").formula = "=Recharge!C30"
-    
-End Sub
-
-Private Sub Set_RechargeFactor_Two()
-
-    Range("F17").formula = "=(max*rf_2*E17/1000)"
-    Range("F19").formula = "=(max*rf_2*E19/1000)/365"
-    
-    Range("G17").formula = "=F17*allow_ratio2"
-    Range("G19").formula = "=F19*allow_ratio2"
-    
-    
-    Range("E13").formula = "=Recharge!I25"
-    Range("F13").formula = "=rf_2"
-    Range("G13").formula = "=allow_ratio2"
-    
-    
-    Range("E26").formula = "=Recharge!D30"
-End Sub
-
-
-Private Sub Set_RechargeFactor_Three()
-
-    Range("F17").formula = "=(max*rf_3*E17/1000)"
-    Range("F19").formula = "=(max*rf_3*E19/1000)/365"
-    
-    Range("G17").formula = "=F17*allow_ratio3"
-    Range("G19").formula = "=F19*allow_ratio3"
-    
-    Range("E13").formula = "=Recharge!I26"
-    Range("F13").formula = "=rf_3"
-    Range("G13").formula = "=allow_ratio3"
-    
-    Range("E26").formula = "=Recharge!E30"
-    
-End Sub
-
-
-
-Private Sub CommandButton6_Click()
-'Select Recharge Factor
-
-    
-   If Frame1.Controls("optionbutton1").value = True Then
-        Call Set_RechargeFactor_One
-   End If
-    
-   If Frame1.Controls("optionbutton2").value = True Then
-        Call Set_RechargeFactor_Two
-   End If
-    
-   If Frame1.Controls("optionbutton3").value = True Then
-        Call Set_RechargeFactor_Three
-   End If
-    
-
-End Sub
-
-
-
-' 2022/6/9 Import YangSoo Data
-' Radius of Influence - 양수영향반경
-' Effective Radius - 유효우물반경
-' 2024/6/7 - 스킨계수 추가해줌 ...
-' 2024/7/9 - 관정별 임포트 해오는것을, FX 에서 가져온다.
-
-Private Sub CommandButton8_Click()
-   
-   Call modWell_Each.ImportEachWell(Range("E15").value)
-        
-End Sub
-
-Private Sub Worksheet_Activate()
-
-    Select Case get_rf_number
-    
-        Case "1"
-             Frame1.Controls("optionbutton1").value = True
-             
-        Case "2"
-             Frame1.Controls("optionbutton2").value = True
-             
-        Case "3"
-             Frame1.Controls("optionbutton3").value = True
-             
-        Case Else
-            Frame1.Controls("optionbutton1").value = True
-           
-    End Select
-
-End Sub
 
 

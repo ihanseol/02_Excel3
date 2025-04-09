@@ -497,6 +497,8 @@ Sub ImportWell_MainWellPage(Optional ByVal mode As String = "_ALL_", Optional By
     Dim Address, AddressValue, Company, FinalAddress As String
     Dim address_array As Variant
     Dim simdo, diameter, Q, Hp As Double
+    ' 2025/4/9 - 펌프심도, 토출관, 양수능력 추가
+    Dim pump_simdo, tochul, pump_capa As Double
     
     nofwell = sheets_count()
     Sheets("Well").Select
@@ -522,12 +524,24 @@ Sub ImportWell_MainWellPage(Optional ByVal mode As String = "_ALL_", Optional By
             Q = wsYangSoo.Cells(4 + i, "k").value
             Hp = wsYangSoo.Cells(4 + i, "m").value
             
+            ' 2025/4/9 - 펌프심도, 토출관, 양수능력 추가
+            pump_simdo = wsYangSoo.Cells(4 + i, "as").value
+            tochul = wsYangSoo.Cells(4 + i, "at").value
+            pump_capa = wsYangSoo.Cells(4 + i, "au").value
+            
+            
             wsWell.Cells(3 + i, "d").value = FinalAddress
             wsWell.Cells(3 + i, "g").value = diameter
             wsWell.Cells(3 + i, "h").value = simdo
             wsWell.Cells(3 + i, "i").value = Q
             wsWell.Cells(3 + i, "j").value = Q
             wsWell.Cells(3 + i, "l").value = Hp
+            
+            ' 2025/4/9 - 펌프심도, 토출관, 양수능력 추가
+            wsWell.Cells(3 + i, "m").value = pump_simdo
+            wsWell.Cells(3 + i, "n").value = tochul
+            wsWell.Cells(3 + i, "k").value = pump_capa
+            
         Next i
         
         Company = wsYangSoo.Range("AP5").value
@@ -541,12 +555,23 @@ Sub ImportWell_MainWellPage(Optional ByVal mode As String = "_ALL_", Optional By
         Q = wsYangSoo.Cells(4 + WellNumber, "k").value
         Hp = wsYangSoo.Cells(4 + WellNumber, "m").value
         
+        ' 2025/4/9 - 펌프심도, 토출관, 양수능력 추가
+        pump_simdo = wsYangSoo.Cells(4 + WellNumber, "as").value
+        tochul = wsYangSoo.Cells(4 + WellNumber, "at").value
+        pump_capa = wsYangSoo.Cells(4 + WellNumber, "au").value
+            
+        
         wsWell.Cells(3 + WellNumber, "d").value = FinalAddress
         wsWell.Cells(3 + WellNumber, "g").value = diameter
         wsWell.Cells(3 + WellNumber, "h").value = simdo
         wsWell.Cells(3 + WellNumber, "i").value = Q
         wsWell.Cells(3 + WellNumber, "j").value = Q
         wsWell.Cells(3 + WellNumber, "l").value = Hp
+        
+        ' 2025/4/9 - 펌프심도, 토출관, 양수능력 추가
+        wsWell.Cells(3 + WellNumber, "m").value = pump_simdo
+        wsWell.Cells(3 + WellNumber, "n").value = tochul
+        wsWell.Cells(3 + WellNumber, "k").value = pump_capa
     
         Company = wsYangSoo.Range("AP" & (4 + WellNumber)).value
     End If

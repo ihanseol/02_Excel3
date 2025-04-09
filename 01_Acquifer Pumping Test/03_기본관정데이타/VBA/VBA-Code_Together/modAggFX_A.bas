@@ -27,7 +27,7 @@ Private Type WellData
     TA As Double
     S1 As Double
     S2 As Double
-    
+        
     k As Double
     Time As Double
     
@@ -59,6 +59,11 @@ Private Type WellData
     
     S3 As Double
     Title As String
+    
+    pump_simdo As Double
+    tochul As Double
+    pump_capa As Double
+    
 End Type
 
 ' Main procedure using UDT
@@ -73,9 +78,9 @@ Sub GetBaseDataFromYangSoo(ByVal singleWell As Integer, ByVal isSingleWellImport
     Call TurnOffStuff
     ' Determine range to clear based on import type
     If Not isSingleWellImport And singleWell = 999 Then
-        rngString = "A5:AR37"
+        rngString = "A5:AU37"
     Else
-        rngString = "A" & (singleWell + 4) & ":AR" & (singleWell + 4)
+        rngString = "A" & (singleWell + 4) & ":AU" & (singleWell + 4)
     End If
     
     Call EraseCellData(rngString)
@@ -172,10 +177,14 @@ Private Function ImportDataForWell(ByVal wellIndex As Integer) As WellData
 
             .S3 = wsSkinFactor.Range("i13").value
             .Title = wsInput.Range("i44").value
+            
+            .pump_simdo = wsInput.Range("i50").value
+            .tochul = wsInput.Range("K50").value
+            .pump_capa = wsInput.Range("i51").value
         End With
     End With
 
-    
+  
     ImportDataForWell = well
 End Function
 
@@ -241,6 +250,11 @@ Private Sub SetWellDataToSheet(ByVal wellIndex As Integer, well As WellData)
         SetCellValue row, 42, .Company, ""
         SetCellValue row, 43, .S3, "0.00"
         SetCellValue row, 44, .Title, ""
+        
+        SetCellValue row, 45, .pump_simdo, "0"
+        SetCellValue row, 46, .tochul, "0"
+        SetCellValue row, 47, .pump_capa, "0"
+        
     End With
     
 End Sub
