@@ -453,6 +453,20 @@ Sub ImportAll_EachWellSpec_OLD()
 End Sub
 
 
+Function ReplaceMultipleSpacesFunction(ByVal val_str As String) As String
+  Dim cleanedString As String
+  Dim regex As Object
+  
+  Set regex = CreateObject("VBScript.RegExp")
+  regex.pattern = "\s+"
+  regex.Global = True
+
+  cleanedString = regex.Replace(val_str, " ")
+  ReplaceMultipleSpacesFunction = cleanedString
+End Function
+
+
+
 Function AddressReducer(ByVal val_address As String) As String
 ' Reduce Address
 ' val --> Address String
@@ -463,7 +477,16 @@ Function AddressReducer(ByVal val_address As String) As String
     Dim AddressArray As Variant
     
         
-    Address = Replace(val_address, "번지", "")
+    Address = Trim(val_address)
+        
+    If InStr(1, val_address, "번지") > 0 And InStr(1, val_address, "호") > 0 Then
+          Address = ReplaceMultipleSpacesFunction(Address)
+          Address = Replace(Address, "번지 ", "-")
+          Address = Left(Address, Len(Address) - 1)  ' remove 호
+    Else
+        Address = Replace(val_address, "번지", "")
+    End If
+        
     Address = Replace(Address, "특별자치", "")
     Address = Replace(Address, "광역", "")
     AddressArray = Split(Address, " ")
@@ -481,6 +504,7 @@ NextIteration:
     AddressReducer = FinalAddress
     
 End Function
+
 
 
 Sub ImportWell_MainWellPage(Optional ByVal mode As String = "_ALL_", Optional ByVal WellNumber As Integer)
