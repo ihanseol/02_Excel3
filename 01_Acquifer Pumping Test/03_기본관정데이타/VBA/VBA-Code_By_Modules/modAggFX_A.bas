@@ -65,6 +65,10 @@ Private Type WellData
     tochul As Double
     pump_capa As Double
     
+    LongTermTestTime As Integer
+    Recover2 As Double
+    Sw2 As Double
+    
 End Type
 
 ' Main procedure using UDT
@@ -79,9 +83,9 @@ Sub GetBaseDataFromYangSoo(ByVal singleWell As Integer, ByVal isSingleWellImport
     Call TurnOffStuff
     ' Determine range to clear based on import type
     If Not isSingleWellImport And singleWell = 999 Then
-        rngString = "A5:AU37"
+        rngString = "A5:AX37"
     Else
-        rngString = "A" & (singleWell + 4) & ":AU" & (singleWell + 4)
+        rngString = "A" & (singleWell + 4) & ":AX" & (singleWell + 4)
     End If
     
     Call EraseCellData(rngString)
@@ -182,6 +186,11 @@ Private Function ImportDataForWell(ByVal wellIndex As Integer) As WellData
             .pump_simdo = wsInput.Range("i50").value
             .tochul = wsInput.Range("K50").value
             .pump_capa = wsInput.Range("i51").value
+            
+            
+            .LongTermTestTime = wsSkinFactor.Range("C9").value
+            .Recover2 = wsSkinFactor.Range("D10").value
+            .Sw2 = wsSkinFactor.Range("D11").value
         End With
     End With
 
@@ -255,6 +264,10 @@ Private Sub SetWellDataToSheet(ByVal wellIndex As Integer, well As WellData)
         SetCellValue row, 45, .pump_simdo, "0"
         SetCellValue row, 46, .tochul, "0"
         SetCellValue row, 47, .pump_capa, "0"
+        
+        SetCellValue row, 48, .LongTermTestTime, "0"
+        SetCellValue row, 49, .Recover2, "0.00"
+        SetCellValue row, 50, .Sw2, "0.00"
         
     End With
     

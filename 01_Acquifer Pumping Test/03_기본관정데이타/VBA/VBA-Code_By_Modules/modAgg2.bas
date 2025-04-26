@@ -13,6 +13,8 @@ Private Type WellParameters
     Stable As Double
     Recover As Double
     
+    LongTestTime As Integer
+    
     Radius As Double
     DeltaS As Double
     DeltaH As Double
@@ -61,8 +63,8 @@ Sub GROK_ImportWellSpec(ByVal singleWell As Integer, ByVal isSingleWellImport As
             params = GetWellParameters(wsYangSoo, i)
 
             Application.ScreenUpdating = False
-            GROK_WriteAllWellData i, params, isSingleWellImport
-            GROK_WriteSummaryTS i, params
+            Call GROK_WriteAllWellData(i, params, isSingleWellImport)
+            Call GROK_WriteSummaryTS(i, params)
             Application.ScreenUpdating = True
         End If
     Next i
@@ -87,7 +89,13 @@ Private Function GetWellParameters(ws As Worksheet, wellIndex As Integer) As Wel
         .Q = ws.Cells(row, "K").value
         .Natural = ws.Cells(row, "B").value
         .Stable = ws.Cells(row, "C").value
-        .Recover = ws.Cells(row, "D").value
+        .LongTestTime = ws.Cells(row, "AV").value
+        
+         If .LongTestTime = 2880 Then
+          .Recover = ws.Cells(row, "D").value
+         Else
+          .Recover = ws.Cells(row, "AW").value
+         End If
         
         .Radius = ws.Cells(row, "H").value
         .DeltaS = ws.Cells(row, "L").value
@@ -150,7 +158,7 @@ Private Sub GROK_WriteWellData(wellIndex As Integer, params As WellParameters, _
     With Range("C" & row)
         ' Section 3-3
         .value = "W-" & wellIndex
-        .Offset(0, 1).value = 2880
+        .Offset(0, 1).value = params.LongTestTime
         .Offset(0, 2).value = params.Q
         .Offset(0, 9).value = params.Q
         .Offset(0, 3).value = params.Natural
@@ -170,6 +178,7 @@ Private Sub GROK_WriteWellData(wellIndex As Integer, params As WellParameters, _
         .Offset(0, 16).value = params.Stable
         .Offset(0, 17).value = params.Recover
         .Offset(0, 18).value = params.Stable - params.Recover
+ 
     End With
 
     Call ApplyBackgroundFill(Range(Cells(row, "C"), Cells(row, "J")), isEven)
