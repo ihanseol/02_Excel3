@@ -1,9 +1,7 @@
-Sub 매크로1()
-'
-' 매크로1 매크로
-'
+Public gblTestTime As Integer
 
-'
+
+Sub 매크로1()
     ActiveSheet.VPageBreaks(1).DragOff Direction:=xlToRight, RegionIndex:=1
 End Sub
 

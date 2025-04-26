@@ -24,6 +24,4 @@ Private Sub CommandButton1_Click()
 End Sub
 
 
-Private Sub Worksheet_SelectionChange(ByVal Target As Range)
 
-End Sub

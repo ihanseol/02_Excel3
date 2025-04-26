@@ -119,14 +119,69 @@ Private Sub CommandButton2_Click()
 
 End Sub
 
+
+
+Sub ColoringTestTime()
+    
+    Call TurnOffStuff
+    Sheets("SkinFactor").Activate
+    
+    shW_aSkinFactor.Range("C10:D11").Select
+    With Selection.Interior
+        .Pattern = xlNone
+        .TintAndShade = 0
+        .PatternTintAndShade = 0
+    End With
+        
+    
+    If mod_INPUT.gblTestTime = 2880 Then
+        
+        shW_aSkinFactor.Range("C10:C11").Select
+        With Selection.Interior
+            .Pattern = xlSolid
+            .PatternColorIndex = xlAutomatic
+            .Color = 13500415
+            .TintAndShade = 0
+            .PatternTintAndShade = 0
+        End With
+    Else
+
+        shW_aSkinFactor.Range("D10:D11").Select
+        With Selection.Interior
+            .Pattern = xlSolid
+            .PatternColorIndex = xlAutomatic
+            .Color = 13500415
+            .TintAndShade = 0
+            .PatternTintAndShade = 0
+        End With
+    
+    End If
+    
+    shW_aSkinFactor.Range("H10").Select
+    
+    Sheets("Input").Activate
+    Call TurnOnStuff
+    
+End Sub
+
+Private Sub OptionButton1_Click()
+    mod_INPUT.gblTestTime = 2880
+    'MsgBox "2880"
+    shW_aSkinFactor.Range("C9").Value = 2880
+    Call ColoringTestTime
+End Sub
+
+Private Sub OptionButton2_Click()
+    mod_INPUT.gblTestTime = 1440
+    'MsgBox "1440"
+    shW_aSkinFactor.Range("C9").Value = 1440
+        Call ColoringTestTime
+End Sub
+
 Private Sub Worksheet_Activate()
-    '  Dim gong     As Integer
-    '  Dim KeyCell  As Range
-    '
-    '  Set KeyCell = Range("J48")
-    '
-    '  gong = Val(CleanString(KeyCell.Value))
-    '  Call SetChartTitleText(gong)
+
+    mod_INPUT.gblTestTime = 2880
+
 End Sub
 
 
@@ -154,9 +209,7 @@ Private Sub CommandButton1_Click()
 End Sub
 
 
-Private Sub Worksheet_SelectionChange(ByVal Target As Range)
 
-End Sub
 Private Sub CommandButton1_Click()
     Call hide_gachae
 End Sub
@@ -323,11 +376,18 @@ End Sub
 Private Sub CommandButton_Print_Long_Click()
     Dim well As Integer
     well = GetNumbers(shInput.Range("I54").Value)
-
-    Sheets("장회").Visible = True
-    Sheets("장회").Activate
-    Call PrintSheetToPDF_Long(Sheets("장회"), "w" + CStr(well))
-    Sheets("장회").Visible = False
+    
+    If Sheets("SkinFactor").Range("C9").Value = 2880 Then
+        Sheets("장회").Visible = True
+        Sheets("장회").Activate
+        Call PrintSheetToPDF_Long(Sheets("장회"), "w" + CStr(well))
+        Sheets("장회").Visible = False
+    Else
+        Sheets("장회14").Visible = True
+        Sheets("장회14").Activate
+        Call PrintSheetToPDF_Long(Sheets("장회14"), "w" + CStr(well))
+        Sheets("장회14").Visible = False
+    End If
     
 End Sub
 
@@ -337,17 +397,33 @@ Private Sub CommandButton_Print_LS_Click()
     
     Call Change_StepTest_Time
     
-    Sheets("장회").Visible = True
-    Sheets("단계").Visible = True
-    well = GetNumbers(shInput.Range("I54").Value)
     
-    Sheets("단계").Activate
-    Call PrintSheetToPDF_LS(Sheets("단계"), "w" + CStr(well) + "-1.pdf")
-    Sheets("단계").Visible = False
+    If Sheets("SkinFactor").Range("C9").Value = 2880 Then
+        Sheets("장회").Visible = True
+        Sheets("단계").Visible = True
+        well = GetNumbers(shInput.Range("I54").Value)
+        
+        Sheets("단계").Activate
+        Call PrintSheetToPDF_LS(Sheets("단계"), "w" + CStr(well) + "-1.pdf")
+        Sheets("단계").Visible = False
+        
+        Sheets("장회").Activate
+        Call PrintSheetToPDF_LS(Sheets("장회"), "w" + CStr(well) + "-2.pdf")
+        Sheets("장회").Visible = False
+    Else
+        Sheets("장회14").Visible = True
+        Sheets("단계").Visible = True
+        well = GetNumbers(shInput.Range("I54").Value)
+        
+        Sheets("단계").Activate
+        Call PrintSheetToPDF_LS(Sheets("단계"), "w" + CStr(well) + "-1.pdf")
+        Sheets("단계").Visible = False
+        
+        Sheets("장회14").Activate
+        Call PrintSheetToPDF_LS(Sheets("장회14"), "w" + CStr(well) + "-2.pdf")
+        Sheets("장회14").Visible = False
+    End If
     
-    Sheets("장회").Activate
-    Call PrintSheetToPDF_LS(Sheets("장회"), "w" + CStr(well) + "-2.pdf")
-    Sheets("장회").Visible = False
     
 End Sub
 
@@ -616,6 +692,7 @@ End Sub
 
 
 
+Option Explicit
 
 Private Sub Workbook_Open()
       
@@ -664,6 +741,17 @@ Private Sub Workbook_Open()
    
     Call initDictionary
     ' Call GotoTopPosition
+    
+    mod_INPUT.gblTestTime = shW_aSkinFactor.Range("C9").Value
+    
+    If mod_INPUT.gblTestTime = 2880 Then
+        shInput.OptionButton1.Value = True
+    Else
+        shInput.OptionButton2.Value = True
+    End If
+    
+    
+    'shInput.Frame1.Controls("optionbutton1").Value = True
     
 End Sub
 
@@ -1709,6 +1797,16 @@ Sub hide_gachae()
 End Sub
 
 Option Explicit
+
+Public Sub TurnOffStuff()
+    Application.Calculation = xlCalculationManual
+    Application.ScreenUpdating = False
+End Sub
+
+Public Sub TurnOnStuff()
+    Application.Calculation = xlCalculationAutomatic
+    Application.ScreenUpdating = True
+End Sub
 
 
 Sub ResetScreenSize()
@@ -2782,12 +2880,10 @@ CreateLogFile_Error:
 End Sub
 
 
-Sub 매크로1()
-'
-' 매크로1 매크로
-'
+Public gblTestTime As Integer
 
-'
+
+Sub 매크로1()
     ActiveSheet.VPageBreaks(1).DragOff Direction:=xlToRight, RegionIndex:=1
 End Sub
 
@@ -2941,46 +3037,6 @@ End Sub
 
 
 
-Sub MergeNextColumn()
-
-
-    Range(ActiveCell, ActiveCell.Offset(0, 1)).Select
-    
-    With Selection
-        .HorizontalAlignment = xlCenter
-        .VerticalAlignment = xlCenter
-        .WrapText = False
-        .Orientation = 0
-        .AddIndent = False
-        .IndentLevel = 0
-        .ShrinkToFit = False
-        .ReadingOrder = xlContext
-        .MergeCells = False
-    End With
-    Selection.Merge
-End Sub
-
-Sub MergeNextColumn2()
-
-' 바로 가기 키: Ctrl+d
-'
-
-    Range(ActiveCell, ActiveCell.Offset(0, 2)).Select
-    
-    With Selection
-        .HorizontalAlignment = xlCenter
-        .VerticalAlignment = xlCenter
-        .WrapText = False
-        .Orientation = 0
-        .AddIndent = False
-        .IndentLevel = 0
-        .ShrinkToFit = False
-        .ReadingOrder = xlContext
-        .MergeCells = False
-    End With
-    Selection.Merge
-End Sub
-
 'This Module is Empty 
 'This Module is Empty 
 'This Module is Empty 
@@ -2989,15 +3045,6 @@ End Sub
 'This Module is Empty 
 'This Module is Empty 
 'This Module is Empty 
-Sub 매크로2()
-'
-' 매크로2 매크로
-'
-
-'
-    ActiveWindow.Zoom = 110
-    ActiveWindow.Zoom = 120
-End Sub
 
 
 Option Explicit

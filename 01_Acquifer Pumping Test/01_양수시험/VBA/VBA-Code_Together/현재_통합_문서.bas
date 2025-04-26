@@ -1,3 +1,4 @@
+Option Explicit
 
 Private Sub Workbook_Open()
       
@@ -46,6 +47,17 @@ Private Sub Workbook_Open()
    
     Call initDictionary
     ' Call GotoTopPosition
+    
+    mod_INPUT.gblTestTime = shW_aSkinFactor.Range("C9").Value
+    
+    If mod_INPUT.gblTestTime = 2880 Then
+        shInput.OptionButton1.Value = True
+    Else
+        shInput.OptionButton2.Value = True
+    End If
+    
+    
+    'shInput.Frame1.Controls("optionbutton1").Value = True
     
 End Sub
 

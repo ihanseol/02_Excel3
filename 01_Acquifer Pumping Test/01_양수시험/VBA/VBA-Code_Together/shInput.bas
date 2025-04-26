@@ -118,12 +118,67 @@ Private Sub CommandButton2_Click()
 
 End Sub
 
+
+
+Sub ColoringTestTime()
+    
+    Call TurnOffStuff
+    Sheets("SkinFactor").Activate
+    
+    shW_aSkinFactor.Range("C10:D11").Select
+    With Selection.Interior
+        .Pattern = xlNone
+        .TintAndShade = 0
+        .PatternTintAndShade = 0
+    End With
+        
+    
+    If mod_INPUT.gblTestTime = 2880 Then
+        
+        shW_aSkinFactor.Range("C10:C11").Select
+        With Selection.Interior
+            .Pattern = xlSolid
+            .PatternColorIndex = xlAutomatic
+            .Color = 13500415
+            .TintAndShade = 0
+            .PatternTintAndShade = 0
+        End With
+    Else
+
+        shW_aSkinFactor.Range("D10:D11").Select
+        With Selection.Interior
+            .Pattern = xlSolid
+            .PatternColorIndex = xlAutomatic
+            .Color = 13500415
+            .TintAndShade = 0
+            .PatternTintAndShade = 0
+        End With
+    
+    End If
+    
+    shW_aSkinFactor.Range("H10").Select
+    
+    Sheets("Input").Activate
+    Call TurnOnStuff
+    
+End Sub
+
+Private Sub OptionButton1_Click()
+    mod_INPUT.gblTestTime = 2880
+    'MsgBox "2880"
+    shW_aSkinFactor.Range("C9").Value = 2880
+    Call ColoringTestTime
+End Sub
+
+Private Sub OptionButton2_Click()
+    mod_INPUT.gblTestTime = 1440
+    'MsgBox "1440"
+    shW_aSkinFactor.Range("C9").Value = 1440
+        Call ColoringTestTime
+End Sub
+
 Private Sub Worksheet_Activate()
-    '  Dim gong     As Integer
-    '  Dim KeyCell  As Range
-    '
-    '  Set KeyCell = Range("J48")
-    '
-    '  gong = Val(CleanString(KeyCell.Value))
-    '  Call SetChartTitleText(gong)
+
+    mod_INPUT.gblTestTime = 2880
+
 End Sub

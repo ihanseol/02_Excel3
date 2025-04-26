@@ -1,5 +1,15 @@
 Option Explicit
 
+Public Sub TurnOffStuff()
+    Application.Calculation = xlCalculationManual
+    Application.ScreenUpdating = False
+End Sub
+
+Public Sub TurnOnStuff()
+    Application.Calculation = xlCalculationAutomatic
+    Application.ScreenUpdating = True
+End Sub
+
 
 Sub ResetScreenSize()
     Dim ws As Worksheet

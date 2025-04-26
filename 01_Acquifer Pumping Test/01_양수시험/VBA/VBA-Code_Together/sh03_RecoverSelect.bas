@@ -2,11 +2,18 @@
 Private Sub CommandButton_Print_Long_Click()
     Dim well As Integer
     well = GetNumbers(shInput.Range("I54").Value)
-
-    Sheets("장회").Visible = True
-    Sheets("장회").Activate
-    Call PrintSheetToPDF_Long(Sheets("장회"), "w" + CStr(well))
-    Sheets("장회").Visible = False
+    
+    If Sheets("SkinFactor").Range("C9").Value = 2880 Then
+        Sheets("장회").Visible = True
+        Sheets("장회").Activate
+        Call PrintSheetToPDF_Long(Sheets("장회"), "w" + CStr(well))
+        Sheets("장회").Visible = False
+    Else
+        Sheets("장회14").Visible = True
+        Sheets("장회14").Activate
+        Call PrintSheetToPDF_Long(Sheets("장회14"), "w" + CStr(well))
+        Sheets("장회14").Visible = False
+    End If
     
 End Sub
 
@@ -16,17 +23,33 @@ Private Sub CommandButton_Print_LS_Click()
     
     Call Change_StepTest_Time
     
-    Sheets("장회").Visible = True
-    Sheets("단계").Visible = True
-    well = GetNumbers(shInput.Range("I54").Value)
     
-    Sheets("단계").Activate
-    Call PrintSheetToPDF_LS(Sheets("단계"), "w" + CStr(well) + "-1.pdf")
-    Sheets("단계").Visible = False
+    If Sheets("SkinFactor").Range("C9").Value = 2880 Then
+        Sheets("장회").Visible = True
+        Sheets("단계").Visible = True
+        well = GetNumbers(shInput.Range("I54").Value)
+        
+        Sheets("단계").Activate
+        Call PrintSheetToPDF_LS(Sheets("단계"), "w" + CStr(well) + "-1.pdf")
+        Sheets("단계").Visible = False
+        
+        Sheets("장회").Activate
+        Call PrintSheetToPDF_LS(Sheets("장회"), "w" + CStr(well) + "-2.pdf")
+        Sheets("장회").Visible = False
+    Else
+        Sheets("장회14").Visible = True
+        Sheets("단계").Visible = True
+        well = GetNumbers(shInput.Range("I54").Value)
+        
+        Sheets("단계").Activate
+        Call PrintSheetToPDF_LS(Sheets("단계"), "w" + CStr(well) + "-1.pdf")
+        Sheets("단계").Visible = False
+        
+        Sheets("장회14").Activate
+        Call PrintSheetToPDF_LS(Sheets("장회14"), "w" + CStr(well) + "-2.pdf")
+        Sheets("장회14").Visible = False
+    End If
     
-    Sheets("장회").Activate
-    Call PrintSheetToPDF_LS(Sheets("장회"), "w" + CStr(well) + "-2.pdf")
-    Sheets("장회").Visible = False
     
 End Sub
 
