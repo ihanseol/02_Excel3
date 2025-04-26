@@ -54,6 +54,7 @@ Private Sub Workbook_Open()
         shInput.OptionButton1.Value = True
     Else
         shInput.OptionButton2.Value = True
+        mod_INPUT.gblTestTime = 1440
     End If
     
     

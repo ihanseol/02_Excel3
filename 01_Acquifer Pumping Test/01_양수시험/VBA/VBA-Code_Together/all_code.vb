@@ -122,6 +122,8 @@ End Sub
 
 
 Sub ColoringTestTime()
+' change current setting by yangsoo day, 2880 or 1440
+' change background color by current selecttion
     
     Call TurnOffStuff
     Sheets("SkinFactor").Activate
@@ -178,11 +180,7 @@ Private Sub OptionButton2_Click()
         Call ColoringTestTime
 End Sub
 
-Private Sub Worksheet_Activate()
 
-    mod_INPUT.gblTestTime = 2880
-
-End Sub
 
 
 Private Sub CommandButton_ExRE1_Click()
@@ -748,6 +746,7 @@ Private Sub Workbook_Open()
         shInput.OptionButton1.Value = True
     Else
         shInput.OptionButton2.Value = True
+        mod_INPUT.gblTestTime = 1440
     End If
     
     
