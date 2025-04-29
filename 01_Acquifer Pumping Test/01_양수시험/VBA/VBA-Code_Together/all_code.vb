@@ -170,14 +170,38 @@ Private Sub OptionButton1_Click()
     mod_INPUT.gblTestTime = 2880
     'MsgBox "2880"
     shW_aSkinFactor.Range("C9").Value = 2880
+    
+    sh02_JanggiSelect1.name = "J1440"
+    sh03_RecoverSelect1.name = "R120"
+    sh02_JanggiSelect.name = "Janggi.Select"
+    sh03_RecoverSelect.name = "Recover.Select"
+    
+    sh02_JanggiSelect.Visible = True
+    sh03_RecoverSelect.Visible = True
+    sh02_JanggiSelect1.Visible = False
+    sh03_RecoverSelect1.Visible = False
+    
     Call ColoringTestTime
     Call mod_W1.Restore2880
 End Sub
+
+
 
 Private Sub OptionButton2_Click()
     mod_INPUT.gblTestTime = 1440
     'MsgBox "1440"
     shW_aSkinFactor.Range("C9").Value = 1440
+    
+    sh02_JanggiSelect.name = "J2880"
+    sh03_RecoverSelect.name = "R360"
+    sh02_JanggiSelect1.name = "Janggi.Select"
+    sh03_RecoverSelect1.name = "Recover.Select"
+    
+    sh02_JanggiSelect.Visible = False
+    sh03_RecoverSelect.Visible = False
+    sh02_JanggiSelect1.Visible = True
+    sh03_RecoverSelect1.Visible = True
+
     Call ColoringTestTime
     Call mod_W1.Delete2880
 End Sub
@@ -696,16 +720,7 @@ Option Explicit
 
 Private Sub Workbook_Open()
       
-    'Sheet6.Activate
-    sh01_StepSelect.name = "Step.Select"
-    
-    'Sheet7.Activate
-    sh02_JanggiSelect.name = "Janggi.Select"
-    
-    'Sheet71.Activate
-    sh03_RecoverSelect.name = "Recover.Select"
-       
-       
+
     With shW_LongTEST.ComboBox1
         .AddItem "60"
         .AddItem "75"
@@ -751,7 +766,37 @@ Private Sub Workbook_Open()
         mod_INPUT.gblTestTime = 1440
     End If
     
+    ' 2025/4/29
+    ' depends on yangsoo test time, sheet on off
     
+    sh01_StepSelect.name = "Step.Select"
+           
+    If mod_INPUT.gblTestTime = 2880 Then
+        sh02_JanggiSelect1.name = "J1440"
+        sh03_RecoverSelect1.name = "R120"
+        
+        sh02_JanggiSelect.name = "Janggi.Select"
+        sh03_RecoverSelect.name = "Recover.Select"
+        
+        
+        sh02_JanggiSelect.Visible = True
+        sh03_RecoverSelect.Visible = True
+        sh02_JanggiSelect1.Visible = False
+        sh03_RecoverSelect1.Visible = False
+    Else
+        sh02_JanggiSelect.name = "J2880"
+        sh03_RecoverSelect.name = "R360"
+        
+        sh02_JanggiSelect1.name = "Janggi.Select"
+        sh03_RecoverSelect1.name = "Recover.Select"
+        
+        sh02_JanggiSelect.Visible = False
+        sh03_RecoverSelect.Visible = False
+        sh02_JanggiSelect1.Visible = True
+        sh03_RecoverSelect1.Visible = True
+        
+    End If
+       
     'shInput.Frame1.Controls("optionbutton1").Value = True
     
 End Sub
@@ -3566,3 +3611,223 @@ Sub Delete2880()
     Next i
 
 End Sub
+
+Private Sub CommandButton1_Click()
+    Call janggi_01
+End Sub
+
+Private Sub CommandButton2_Click()
+    Call janggi_02
+End Sub
+
+Private Sub CommandButton3_Click()
+    Call save_original
+End Sub
+
+Private Sub CommandButton4_Click()
+    
+    Call ToggleWellRadius
+End Sub
+
+
+
+'0 : skin factor, cell, C8
+'1 : Re1,         cell, E8
+'2 : Re2,         cell, H8
+'3 : Re3,         cell, G10
+
+
+Private Sub ToggleWellRadius()
+    Dim er As Integer
+    Dim cellformula As String
+    
+    er = GetEffectiveRadius
+        
+     Select Case er
+        Case erRE1
+            cellformula = "=SkinFactor!K8"
+        
+        Case erRE2
+            cellformula = "=SkinFactor!K9"
+            
+        Case erRE3
+            cellformula = "=SkinFactor!K10"
+        
+        Case Else
+            cellformula = "=SkinFactor!C8"
+    End Select
+
+    If (Range("A27").Formula = cellformula) Then
+        Range("A27").Formula = 0
+    Else
+        Range("A27").Formula = cellformula
+    End If
+
+End Sub
+
+Private Sub SetEffectiveRadius()
+     er = GetEffectiveRadius
+            
+     Select Case er
+        Case erRE1
+            cellformula = "=SkinFactor!K8"
+        
+        Case erRE2
+            cellformula = "=SkinFactor!K9"
+            
+        Case erRE3
+            cellformula = "=SkinFactor!K10"
+        
+        Case Else
+            cellformula = "=SkinFactor!C8"
+    End Select
+
+    Range("A27").Formula = cellformula
+End Sub
+
+
+Private Sub Worksheet_Activate()
+'    Dim gong1, gong2 As String
+'    Dim gong As Long
+'
+'    gong = Val(CleanString(shInput.Range("J48").Value))
+'    gong1 = "W-" & CStr(gong)
+'    gong2 = shInput.Range("i54").Value
+'
+'    If gong1 <> gong2 Then
+'        'MsgBox "different : " & g1 & " g2 : " & g2
+'        shInput.Range("i54").Value = gong1
+'    End If
+    
+    Call SetEffectiveRadius
+End Sub
+
+
+
+Private Sub CommandButton_Print_Long_Click()
+    Dim well As Integer
+    well = GetNumbers(shInput.Range("I54").Value)
+    
+    If Sheets("SkinFactor").Range("C9").Value = 2880 Then
+        Sheets("장회").Visible = True
+        Sheets("장회").Activate
+        Call PrintSheetToPDF_Long(Sheets("장회"), "w" + CStr(well))
+        Sheets("장회").Visible = False
+    Else
+        Sheets("장회14").Visible = True
+        Sheets("장회14").Activate
+        Call PrintSheetToPDF_Long(Sheets("장회14"), "w" + CStr(well))
+        Sheets("장회14").Visible = False
+    End If
+    
+End Sub
+
+Private Sub CommandButton_Print_LS_Click()
+    Dim well As Integer
+    
+    
+    Call Change_StepTest_Time
+    
+    
+    If Sheets("SkinFactor").Range("C9").Value = 2880 Then
+        Sheets("장회").Visible = True
+        Sheets("단계").Visible = True
+        well = GetNumbers(shInput.Range("I54").Value)
+        
+        Sheets("단계").Activate
+        Call PrintSheetToPDF_LS(Sheets("단계"), "w" + CStr(well) + "-1.pdf")
+        Sheets("단계").Visible = False
+        
+        Sheets("장회").Activate
+        Call PrintSheetToPDF_LS(Sheets("장회"), "w" + CStr(well) + "-2.pdf")
+        Sheets("장회").Visible = False
+    Else
+        Sheets("장회14").Visible = True
+        Sheets("단계").Visible = True
+        well = GetNumbers(shInput.Range("I54").Value)
+        
+        Sheets("단계").Activate
+        Call PrintSheetToPDF_LS(Sheets("단계"), "w" + CStr(well) + "-1.pdf")
+        Sheets("단계").Visible = False
+        
+        Sheets("장회14").Activate
+        Call PrintSheetToPDF_LS(Sheets("장회14"), "w" + CStr(well) + "-2.pdf")
+        Sheets("장회14").Visible = False
+    End If
+    
+    
+End Sub
+
+
+
+Private Sub CommandButton1_Click()
+    Call recover_01
+End Sub
+
+Private Sub CommandButton2_Click()
+    Call save_original
+End Sub
+
+Private Sub CommandButton3_Click()
+
+Sheets("장회").Visible = True
+Sheets("장회14").Visible = True
+Sheets("단계").Visible = True
+Sheets("장기28").Visible = True
+Sheets("장기14").Visible = True
+Sheets("회복").Visible = True
+Sheets("회복12").Visible = True
+
+End Sub
+
+Private Sub CommandButton4_Click()
+
+Sheets("장회").Visible = False
+Sheets("장회14").Visible = False
+Sheets("단계").Visible = False
+Sheets("장기28").Visible = False
+Sheets("장기14").Visible = False
+Sheets("회복").Visible = False
+Sheets("회복12").Visible = False
+
+End Sub
+
+Private Sub Worksheet_Activate()
+    Dim gong1, gong2 As String
+    Dim gong As Long
+    Dim er As Integer
+    Dim cellformula As String
+    
+
+'    gong = Val(CleanString(shInput.Range("J48").Value))
+'
+'    gong1 = "W-" & CStr(gong)
+'    gong2 = shInput.Range("i54").Value
+'
+'    If gong1 <> gong2 Then
+'        'MsgBox "different : " & g1 & " g2 : " & g2
+'        shInput.Range("i54").Value = gong1
+'    End If
+    
+
+    er = GetEffectiveRadius
+        
+     Select Case er
+        Case erRE1
+            cellformula = "=SkinFactor!K8"
+        
+        Case erRE2
+            cellformula = "=SkinFactor!K9"
+            
+        Case erRE3
+            cellformula = "=SkinFactor!K10"
+        
+        Case Else
+            cellformula = "=SkinFactor!C8"
+    End Select
+    
+    Range("A28").Formula = cellformula
+    
+End Sub
+
+

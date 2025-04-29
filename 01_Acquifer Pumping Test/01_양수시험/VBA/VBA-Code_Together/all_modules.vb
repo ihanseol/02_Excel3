@@ -36,3 +36,5 @@ Sheet9
 UserFormTS2
 UserFormTS1
 mod_W1
+sh02_JanggiSelect1
+sh03_RecoverSelect1

@@ -2,16 +2,7 @@ Option Explicit
 
 Private Sub Workbook_Open()
       
-    'Sheet6.Activate
-    sh01_StepSelect.name = "Step.Select"
-    
-    'Sheet7.Activate
-    sh02_JanggiSelect.name = "Janggi.Select"
-    
-    'Sheet71.Activate
-    sh03_RecoverSelect.name = "Recover.Select"
-       
-       
+
     With shW_LongTEST.ComboBox1
         .AddItem "60"
         .AddItem "75"
@@ -57,7 +48,37 @@ Private Sub Workbook_Open()
         mod_INPUT.gblTestTime = 1440
     End If
     
+    ' 2025/4/29
+    ' depends on yangsoo test time, sheet on off
     
+    sh01_StepSelect.name = "Step.Select"
+           
+    If mod_INPUT.gblTestTime = 2880 Then
+        sh02_JanggiSelect1.name = "J1440"
+        sh03_RecoverSelect1.name = "R120"
+        
+        sh02_JanggiSelect.name = "Janggi.Select"
+        sh03_RecoverSelect.name = "Recover.Select"
+        
+        
+        sh02_JanggiSelect.Visible = True
+        sh03_RecoverSelect.Visible = True
+        sh02_JanggiSelect1.Visible = False
+        sh03_RecoverSelect1.Visible = False
+    Else
+        sh02_JanggiSelect.name = "J2880"
+        sh03_RecoverSelect.name = "R360"
+        
+        sh02_JanggiSelect1.name = "Janggi.Select"
+        sh03_RecoverSelect1.name = "Recover.Select"
+        
+        sh02_JanggiSelect.Visible = False
+        sh03_RecoverSelect.Visible = False
+        sh02_JanggiSelect1.Visible = True
+        sh03_RecoverSelect1.Visible = True
+        
+    End If
+       
     'shInput.Frame1.Controls("optionbutton1").Value = True
     
 End Sub

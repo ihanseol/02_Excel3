@@ -169,14 +169,38 @@ Private Sub OptionButton1_Click()
     mod_INPUT.gblTestTime = 2880
     'MsgBox "2880"
     shW_aSkinFactor.Range("C9").Value = 2880
+    
+    sh02_JanggiSelect1.name = "J1440"
+    sh03_RecoverSelect1.name = "R120"
+    sh02_JanggiSelect.name = "Janggi.Select"
+    sh03_RecoverSelect.name = "Recover.Select"
+    
+    sh02_JanggiSelect.Visible = True
+    sh03_RecoverSelect.Visible = True
+    sh02_JanggiSelect1.Visible = False
+    sh03_RecoverSelect1.Visible = False
+    
     Call ColoringTestTime
     Call mod_W1.Restore2880
 End Sub
+
+
 
 Private Sub OptionButton2_Click()
     mod_INPUT.gblTestTime = 1440
     'MsgBox "1440"
     shW_aSkinFactor.Range("C9").Value = 1440
+    
+    sh02_JanggiSelect.name = "J2880"
+    sh03_RecoverSelect.name = "R360"
+    sh02_JanggiSelect1.name = "Janggi.Select"
+    sh03_RecoverSelect1.name = "Recover.Select"
+    
+    sh02_JanggiSelect.Visible = False
+    sh03_RecoverSelect.Visible = False
+    sh02_JanggiSelect1.Visible = True
+    sh03_RecoverSelect1.Visible = True
+
     Call ColoringTestTime
     Call mod_W1.Delete2880
 End Sub
