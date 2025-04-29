@@ -18,19 +18,74 @@ Sub DeleteAllSummaryPage(ByVal well_str As String)
     Sheets(well_str).Activate
 End Sub
 
+' 2025-4-29
+' depends on yangsoo time, 1 day or 2day
+
+Sub QualityTest_Restore2880(well As Integer)
+    Dim SaveFormula(5, 3) As String
+    Dim i, j As Integer
+    
+    SaveFormula(0, 0) = "=$C$6+C21/1440"
+    SaveFormula(1, 0) = "1680"
+    SaveFormula(2, 0) = "=$D$20"
+    SaveFormula(3, 0) = "=$E$20"
+    SaveFormula(4, 0) = "=$F$20"
+    
+    SaveFormula(0, 1) = "=$C$6+C22/1440"
+    SaveFormula(1, 1) = "1920"
+    SaveFormula(2, 1) = "=$D$20"
+    SaveFormula(3, 1) = "=$E$20"
+    SaveFormula(4, 1) = "=$F$20"
+    
+    SaveFormula(0, 2) = "=$C$6+C23/1440"
+    SaveFormula(1, 2) = "2880"
+    SaveFormula(2, 2) = "=$D$20"
+    SaveFormula(3, 2) = "=$E$20"
+    SaveFormula(4, 2) = "=$F$20"
+    
+    If IsSheetExists("p" + CStr(well)) Then
+        For i = 0 To 2
+            For j = 0 To 4
+                Sheets("p" + CStr(well)).Cells(21 + i, 2 + j).formula = SaveFormula(j, i)
+            Next j
+        Next i
+    End If
+End Sub
+
+
+' 2025-4-29
+' just in case W1 simple yangsoo test
+' if YangSoo is 1day, 1440 then delete after ...
+
+Sub QualityTest_Delete2880(ByVal well As Integer)
+    Dim i, j As Integer
+    
+    If IsSheetExists("p" + CStr(well)) Then
+        If Sheets("YangSoo").Range("av" + CStr(well + 4)).value = 1440 Then
+            For i = 0 To 2
+                For j = 0 To 4
+                    Sheets("p" + CStr(well)).Cells(21 + i, 2 + j).formula = ""
+                Next j
+            Next i
+        Else
+            Call QualityTest_Restore2880(well)
+        End If
+    End If
+End Sub
 
 
 Sub GetWaterSpecFromYangSoo_Q1()
   Dim thisname, fName As String
-  Dim cell  As String
+  Dim well  As String
   Dim Time As Date
   Dim bTemp, ec1, ph1 As Double
+  Dim nWell As Integer
   
-  
-  cell = Range("d12").value
+  well = Range("d12").value
+  nWell = CInt(GetNumeric2(well))
   
   thisname = ActiveWorkbook.name
-  fName = "A" & GetNumeric2(cell) & "_ge_OriginalSaveFile.xlsm"
+  fName = "A" & GetNumeric2(well) & "_ge_OriginalSaveFile.xlsm"
  
   If Not IsWorkBookOpen(fName) Then
     MsgBox "Please open the yangsoo data ! " & fName
@@ -199,9 +254,9 @@ End Sub
 '******************************************************************************************************************************
 
 
-
-
 Sub getModDataFromYangSooSingle(ByVal thisname As String, ByVal fName As String)
+' in yangsoo file, A1_ge_OriginalSaveFile.xlsm
+
     Windows(fName).Activate
     Sheets("w1").Activate
     Sheets("w1").Range("H14:J23").Select
@@ -212,6 +267,7 @@ Sub getModDataFromYangSooSingle(ByVal thisname As String, ByVal fName As String)
    
     Selection.PasteSpecial Paste:=xlPasteValues, Operation:=xlNone, SkipBlanks _
         :=False, Transpose:=False
+        
 End Sub
 
 

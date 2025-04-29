@@ -72,9 +72,9 @@ Function IsSheetExists(ByVal sheet_name As String) As Boolean
    
     
     If sheetExists Then
-        CheckSheetExists = True
+        IsSheetExists = True
     Else
-        CheckSheetExists = False
+        IsSheetExists = False
     End If
 End Function
 

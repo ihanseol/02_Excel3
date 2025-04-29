@@ -170,13 +170,15 @@ Private Sub OptionButton1_Click()
     'MsgBox "2880"
     shW_aSkinFactor.Range("C9").Value = 2880
     Call ColoringTestTime
+    Call mod_W1.Restore2880
 End Sub
 
 Private Sub OptionButton2_Click()
     mod_INPUT.gblTestTime = 1440
     'MsgBox "1440"
     shW_aSkinFactor.Range("C9").Value = 1440
-        Call ColoringTestTime
+    Call ColoringTestTime
+    Call mod_W1.Delete2880
 End Sub
 
 

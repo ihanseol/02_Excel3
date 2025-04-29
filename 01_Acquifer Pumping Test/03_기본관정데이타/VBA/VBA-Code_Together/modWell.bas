@@ -700,6 +700,10 @@ Sub ImportAll_QT()
         qt = determin_Q_Type
         
         Application.Run "modWaterQualityTest.GetWaterSpecFromYangSoo_" & qt
+        If qt = "Q1" Then
+            Call modWaterQualityTest.QualityTest_Delete2880(i)
+        End If
+        
     Next i
 End Sub
 
