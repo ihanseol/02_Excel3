@@ -562,6 +562,15 @@ End Function
 
 Option Explicit
 
+
+Sub SS_Active()
+    If ActiveSheet.Name = "ss" Then
+        Sheet2_aa.Activate
+    Else
+        Sheet5_ss.Activate
+    End If
+End Sub
+
 Private Function lastRowByKey(cell As String) As Long
     lastRowByKey = Range(cell).End(xlDown).row
 End Function
@@ -861,10 +870,11 @@ Sub AddressReset(Optional ByVal shName As String = "option")
     
     lastrow = lastRowByKey("M2")
     
+    On Error Resume Next
     If CheckSubstring(Range("M2"), "번지") Then
         Range("M2").Formula = "=D2&"" ""&E2"
     Else
-        Range("M2").Formula = "=D2&"" ""&E2&"" 번지"" "
+        Range("M2").Formula = "=D2&"" ""&E2&""번지"" "
     End If
     
     
@@ -1472,6 +1482,7 @@ Sub Initialize_Setting()
     
     ComboBox_AREA.Value = TextBox_AREA.Value
     LoadSurveyData (TextBox_AREA.Value)
+    CommandButton_Insert.SetFocus
     
 End Sub
 
@@ -1606,8 +1617,8 @@ Option Explicit
 ' 이곳에다가 기본적인 설정값을 세팅해준다.
 ' 파일이름과, 조사일같은것들을 ...
 
-Const EXPORT_DATE As String = "2025-02-13"
-Const EXPORT_ADDR_HEADER As String = "경기도 안양시 "
+Const EXPORT_DATE As String = "2025-02-24"
+Const EXPORT_ADDR_HEADER As String = "광주광역시 "
 Const EXPORT_FILE_NAME As String = "d:\05_Send\iyong_template.xlsx"
         
 ' 1인 1일당 급수량, 엑셀파일을 보고 검사
@@ -2886,6 +2897,7 @@ Private Sub UserForm_Initialize()
     Me.Top = Application.Top + (0.5 * Application.Height) - (0.5 * Me.Height)
     
    OptionButton1.Value = True
+   CommandButton1.SetFocus
 End Sub
 
 'Private Sub UserForm_KeyDown(ByVal KeyCode As MSForms.ReturnInteger, ByVal Shift As Integer)
@@ -2946,6 +2958,7 @@ Private Sub UserForm_Initialize()
     Me.Top = Application.Top + (0.5 * Application.Height) - (0.5 * Me.Height)
     
    OptionButton1.Value = True
+   CommandButton1.SetFocus
     
 End Sub
 
@@ -3155,6 +3168,7 @@ Private Sub UserForm_Initialize()
     Me.Top = Application.Top + (0.5 * Application.Height) - (0.5 * Me.Height)
     
    OptionButton1.Value = True
+   CommandButton1.SetFocus
 End Sub
 
 'Private Sub UserForm_KeyDown(ByVal KeyCode As MSForms.ReturnInteger, ByVal Shift As Integer)

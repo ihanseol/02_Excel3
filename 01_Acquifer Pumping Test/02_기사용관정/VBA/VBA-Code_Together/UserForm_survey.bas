@@ -134,6 +134,7 @@ Sub Initialize_Setting()
     
     ComboBox_AREA.Value = TextBox_AREA.Value
     LoadSurveyData (TextBox_AREA.Value)
+    CommandButton_Insert.SetFocus
     
 End Sub
 

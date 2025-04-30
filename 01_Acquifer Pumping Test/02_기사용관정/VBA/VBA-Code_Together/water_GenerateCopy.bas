@@ -6,6 +6,15 @@
 
 Option Explicit
 
+
+Sub SS_Active()
+    If ActiveSheet.Name = "ss" Then
+        Sheet2_aa.Activate
+    Else
+        Sheet5_ss.Activate
+    End If
+End Sub
+
 Private Function lastRowByKey(cell As String) As Long
     lastRowByKey = Range(cell).End(xlDown).row
 End Function
@@ -305,10 +314,11 @@ Sub AddressReset(Optional ByVal shName As String = "option")
     
     lastrow = lastRowByKey("M2")
     
+    On Error Resume Next
     If CheckSubstring(Range("M2"), "번지") Then
         Range("M2").Formula = "=D2&"" ""&E2"
     Else
-        Range("M2").Formula = "=D2&"" ""&E2&"" 번지"" "
+        Range("M2").Formula = "=D2&"" ""&E2&""번지"" "
     End If
     
     

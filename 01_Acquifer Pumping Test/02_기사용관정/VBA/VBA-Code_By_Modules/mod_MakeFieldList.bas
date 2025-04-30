@@ -10,8 +10,8 @@ Option Explicit
 ' 이곳에다가 기본적인 설정값을 세팅해준다.
 ' 파일이름과, 조사일같은것들을 ...
 
-Const EXPORT_DATE As String = "2025-02-13"
-Const EXPORT_ADDR_HEADER As String = "경기도 안양시 "
+Const EXPORT_DATE As String = "2025-02-24"
+Const EXPORT_ADDR_HEADER As String = "광주광역시 "
 Const EXPORT_FILE_NAME As String = "d:\05_Send\iyong_template.xlsx"
         
 ' 1인 1일당 급수량, 엑셀파일을 보고 검사

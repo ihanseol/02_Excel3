@@ -51,6 +51,7 @@ Private Sub UserForm_Initialize()
     Me.Top = Application.Top + (0.5 * Application.Height) - (0.5 * Me.Height)
     
    OptionButton1.Value = True
+   CommandButton1.SetFocus
     
 End Sub
 
