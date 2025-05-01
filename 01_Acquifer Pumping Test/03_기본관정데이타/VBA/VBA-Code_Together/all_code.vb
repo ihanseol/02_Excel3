@@ -302,6 +302,45 @@ Private Sub CommandButton4_Click()
 End Sub
 
 
+Private Sub CommandButton_GetDirectionChar_Click()
+    Dim angle As Integer
+    Dim grade As String
+    
+    angle = getDirectionFromWellActiveSheet()
+
+    Select Case angle
+       Case 0 To 10
+         grade = "동향"
+       
+       Case 11 To 79
+         grade = "북동향"
+       Case 80 To 100
+         grade = "북"
+       Case 101 To 169
+         grade = "북서향"
+         
+       Case 170 To 190
+         grade = "동향"
+         
+       Case 191 To 259
+         grade = "남서향"
+       
+       Case 260 To 280
+         grade = "남향"
+       
+       Case 281 To 349
+         grade = "남동향"
+         
+       Case 350 To 360
+         grade = "동향"
+         
+       Case Else
+         grade = "Invalid Score"
+     End Select
+
+    Range("L13").value = grade
+    
+End Sub
 
 Private Sub CommandButton2_Click()
     Call TurnOffStuff
@@ -13374,7 +13413,7 @@ Sub Write31_StepTestData_Single(a1 As Variant, a2 As Variant, a3 As Variant, Q A
 
 End Sub
 
-
+' Get Direction From Well
 Function getDirectionFromWell(i) As Integer
 
     If Sheets(CStr(i)).Range("k12").Font.Bold Then
@@ -13384,6 +13423,18 @@ Function getDirectionFromWell(i) As Integer
     End If
 
 End Function
+
+' Get Direction From Well Active Sheet
+Function getDirectionFromWellActiveSheet() As Integer
+
+    If ActiveSheet.Range("k12").Font.Bold Then
+        getDirectionFromWellActiveSheet = ActiveSheet.Range("k12").value
+    Else
+        getDirectionFromWellActiveSheet = ActiveSheet.Range("l12").value
+    End If
+
+End Function
+
 
 Sub WriteWellData_Single(Q As Variant, DaeSoo As Variant, T1 As Variant, S1 As Variant, direction As Variant, gradient As Variant, ByVal i As Integer)
     

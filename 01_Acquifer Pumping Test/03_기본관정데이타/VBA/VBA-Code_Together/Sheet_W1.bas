@@ -4,6 +4,45 @@ Private Sub CommandButton4_Click()
 End Sub
 
 
+Private Sub CommandButton_GetDirectionChar_Click()
+    Dim angle As Integer
+    Dim grade As String
+    
+    angle = getDirectionFromWellActiveSheet()
+
+    Select Case angle
+       Case 0 To 10
+         grade = "동향"
+       
+       Case 11 To 79
+         grade = "북동향"
+       Case 80 To 100
+         grade = "북"
+       Case 101 To 169
+         grade = "북서향"
+         
+       Case 170 To 190
+         grade = "동향"
+         
+       Case 191 To 259
+         grade = "남서향"
+       
+       Case 260 To 280
+         grade = "남향"
+       
+       Case 281 To 349
+         grade = "남동향"
+         
+       Case 350 To 360
+         grade = "동향"
+         
+       Case Else
+         grade = "Invalid Score"
+     End Select
+
+    Range("L13").value = grade
+    
+End Sub
 
 Private Sub CommandButton2_Click()
     Call TurnOffStuff

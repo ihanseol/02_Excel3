@@ -1,5 +1,5 @@
 Attribute VB_Name = "modAggWhpa"
-
+' Get Direction From Well
 Function getDirectionFromWell(i) As Integer
 
     If Sheets(CStr(i)).Range("k12").Font.Bold Then
@@ -9,6 +9,18 @@ Function getDirectionFromWell(i) As Integer
     End If
 
 End Function
+
+' Get Direction From Well Active Sheet
+Function getDirectionFromWellActiveSheet() As Integer
+
+    If ActiveSheet.Range("k12").Font.Bold Then
+        getDirectionFromWellActiveSheet = ActiveSheet.Range("k12").value
+    Else
+        getDirectionFromWellActiveSheet = ActiveSheet.Range("l12").value
+    End If
+
+End Function
+
 
 Sub WriteWellData_Single(Q As Variant, DaeSoo As Variant, T1 As Variant, S1 As Variant, direction As Variant, gradient As Variant, ByVal i As Integer)
     
