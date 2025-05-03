@@ -791,7 +791,6 @@ Sub ToggleAddressFormatString()
        
     AddressReset (MainSheet)
     AddressReset (TargetSheet)
-    Range("G7").Select
 
 End Sub
 
@@ -840,7 +839,9 @@ Sub TransferWellData()
        
     AddressReset (MainSheet)
     AddressReset (TargetSheet)
-    Range("G7").Select
+    
+    Range("E2").Select
+    Selection.End(xlDown).Select
 
 
 End Sub
@@ -880,7 +881,9 @@ Sub AddressReset(Optional ByVal shName As String = "option")
     
     Range("M2").Select
     Selection.AutoFill Destination:=Range("M2:M" & lastrow)
-    Range("M2").Select
+    
+    Range("E2").Select
+    Selection.End(xlDown).Select
   
 End Sub
 
@@ -3210,3 +3213,13 @@ Sub test()
 End Sub
 
 
+Sub 매크로1()
+'
+' 매크로1 매크로
+'
+
+'
+    ActiveWindow.SmallScroll Down:=-22
+    Range("E2").Select
+    Selection.End(xlDown).Select
+End Sub

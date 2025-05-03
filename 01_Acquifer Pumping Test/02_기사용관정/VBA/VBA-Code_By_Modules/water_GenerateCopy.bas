@@ -238,7 +238,6 @@ Sub ToggleAddressFormatString()
        
     AddressReset (MainSheet)
     AddressReset (TargetSheet)
-    Range("G7").Select
 
 End Sub
 
@@ -288,7 +287,9 @@ Attribute TransferWellData.VB_ProcData.VB_Invoke_Func = "r\n14"
        
     AddressReset (MainSheet)
     AddressReset (TargetSheet)
-    Range("G7").Select
+    
+    Range("E2").Select
+    Selection.End(xlDown).Select
 
 
 End Sub
@@ -328,7 +329,9 @@ Sub AddressReset(Optional ByVal shName As String = "option")
     
     Range("M2").Select
     Selection.AutoFill Destination:=Range("M2:M" & lastrow)
-    Range("M2").Select
+    
+    Range("E2").Select
+    Selection.End(xlDown).Select
   
 End Sub
 
