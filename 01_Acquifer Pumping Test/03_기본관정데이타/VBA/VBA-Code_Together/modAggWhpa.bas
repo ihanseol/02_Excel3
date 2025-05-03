@@ -20,6 +20,46 @@ Function getDirectionFromWellActiveSheet() As Integer
 
 End Function
 
+Sub getDirectionChar()
+    Dim angle As Integer
+    Dim grade As String
+    
+    angle = modAggWhpa.getDirectionFromWellActiveSheet()
+
+    Select Case angle
+       Case 0 To 10
+         grade = "동향"
+       
+       Case 11 To 79
+         grade = "북동향"
+       Case 80 To 100
+         grade = "북"
+       Case 101 To 169
+         grade = "북서향"
+         
+       Case 170 To 190
+         grade = "동향"
+         
+       Case 191 To 259
+         grade = "남서향"
+       
+       Case 260 To 280
+         grade = "남향"
+       
+       Case 281 To 349
+         grade = "남동향"
+         
+       Case 350 To 360
+         grade = "동향"
+         
+       Case Else
+         grade = "Invalid Score"
+     End Select
+
+    ActiveSheet.Range("L13").value = grade
+End Sub
+
+
 
 Sub WriteWellData_Single(Q As Variant, DaeSoo As Variant, T1 As Variant, S1 As Variant, direction As Variant, gradient As Variant, ByVal i As Integer)
     

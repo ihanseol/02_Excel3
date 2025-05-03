@@ -5,44 +5,24 @@ End Sub
 
 
 Private Sub CommandButton_GetDirectionChar_Click()
-    Dim angle As Integer
-    Dim grade As String
-    
-    angle = getDirectionFromWellActiveSheet()
-
-    Select Case angle
-       Case 0 To 10
-         grade = "동향"
-       
-       Case 11 To 79
-         grade = "북동향"
-       Case 80 To 100
-         grade = "북"
-       Case 101 To 169
-         grade = "북서향"
-         
-       Case 170 To 190
-         grade = "동향"
-         
-       Case 191 To 259
-         grade = "남서향"
-       
-       Case 260 To 280
-         grade = "남향"
-       
-       Case 281 To 349
-         grade = "남동향"
-         
-       Case 350 To 360
-         grade = "동향"
-         
-       Case Else
-         grade = "Invalid Score"
-     End Select
-
-    Range("L13").value = grade
-    
+    Call modAggWhpa.getDirectionChar
 End Sub
+
+Private Sub CommandButton_ToggleDirection_Click()
+    Call BaseData_DrasticIndex.ToggleDirection
+    Call modAggWhpa.getDirectionChar
+End Sub
+
+
+
+' 2025-5-3, Cell K12 changed then getDirectionChar
+'
+Private Sub Worksheet_Change(ByVal Target As Range)
+  If Not Intersect(Target, Me.Range("K12")) Is Nothing Then
+    Call modAggWhpa.getDirectionChar
+  End If
+End Sub
+
 
 Private Sub CommandButton2_Click()
     Call TurnOffStuff
@@ -57,12 +37,6 @@ End Sub
 
 Private Sub CommandButton7_Click()
    Call getWhpaData_EachWell
-End Sub
-
-
-
-Private Sub CommandButton5_Click()
-    Call BaseData_DrasticIndex.ToggleDirection
 End Sub
 
 
