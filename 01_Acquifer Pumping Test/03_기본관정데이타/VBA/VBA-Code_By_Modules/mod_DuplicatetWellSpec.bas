@@ -183,6 +183,8 @@ Sub DuplicateWellSpec(ByVal this_WBNAME As String, ByVal WB_NAME As String, ByVa
     End With
     
     Call InteriorCopyDirection(this_WBNAME, well_no, IS_OVER180)
+    
+    Workbooks(this_WBNAME).Worksheets(CStr(well_no)).Activate
     Call modAggWhpa.getDirectionChar
 
     obj.result = False
