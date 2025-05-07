@@ -10,7 +10,7 @@ End Sub
 
 Private Sub CommandButton_ToggleDirection_Click()
     Call BaseData_DrasticIndex.ToggleDirection
-    Call modAggWhpa.getDirectionChar
+    Call getDirectionChar
 End Sub
 
 
@@ -18,7 +18,7 @@ End Sub
 '
 Private Sub Worksheet_Change(ByVal Target As Range)
   If Not Intersect(Target, Me.Range("K12")) Is Nothing Then
-    Call modAggWhpa.getDirectionChar
+    Call getDirectionChar
   End If
 End Sub
 

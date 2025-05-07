@@ -127,6 +127,69 @@ Private Function get_direction() As Long
     End If
 End Function
 
+' Get Direction From Well
+Function getDirectionFromWell(i) As Integer
+
+    Sheets(CStr(i)).Range("k12").Select
+    If Selection.Font.Bold Then
+        getDirectionFromWell = Sheets(CStr(i)).Range("k12").value
+    Else
+        getDirectionFromWell = Sheets(CStr(i)).Range("l12").value
+    End If
+
+End Function
+
+' Get Direction From Well Active Sheet
+Function getDirectionFromWellActiveSheet() As Integer
+
+    ActiveSheet.Range("k12").Select
+    If Selection.Font.Bold Then
+        getDirectionFromWellActiveSheet = ActiveSheet.Range("k12").value
+    Else
+        getDirectionFromWellActiveSheet = ActiveSheet.Range("l12").value
+    End If
+
+End Function
+
+Sub getDirectionChar()
+    Dim angle As Integer
+    Dim grade As String
+    
+    angle = getDirectionFromWellActiveSheet()
+
+    Select Case angle
+       Case 0 To 10
+         grade = "동향"
+       
+       Case 11 To 79
+         grade = "북동향"
+       Case 80 To 100
+         grade = "북"
+       Case 101 To 169
+         grade = "북서향"
+         
+       Case 170 To 190
+         grade = "동향"
+         
+       Case 191 To 259
+         grade = "남서향"
+       
+       Case 260 To 280
+         grade = "남향"
+       
+       Case 281 To 349
+         grade = "남동향"
+         
+       Case 350 To 360
+         grade = "동향"
+         
+       Case Else
+         grade = "Invalid Score"
+     End Select
+
+    ActiveSheet.Range("L13").value = grade
+End Sub
+
 
 '**********************************************************************************************************************
 
@@ -185,7 +248,7 @@ Sub DuplicateWellSpec(ByVal this_WBNAME As String, ByVal WB_NAME As String, ByVa
     Call InteriorCopyDirection(this_WBNAME, well_no, IS_OVER180)
     
     Workbooks(this_WBNAME).Worksheets(CStr(well_no)).Activate
-    Call modAggWhpa.getDirectionChar
+    Call getDirectionChar
 
     obj.result = False
     Exit Sub
