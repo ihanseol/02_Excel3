@@ -112,6 +112,10 @@ Private Sub CellLight(S As Range)
 End Sub
 
 
+'**********************************************************************************************************************
+'* getDirectionChar
+'**********************************************************************************************************************
+
 Private Function get_direction() As Long
     ' get direction is cell is bold
     ' 셀이 볼드값이면 선택을 한다.  방향이 두개중에서 하나를 선택하게 된다.
@@ -190,6 +194,8 @@ End Sub
 
 
 '**********************************************************************************************************************
+'*  getDirectionChar
+'**********************************************************************************************************************
 
 
 Sub DuplicateWellSpec(ByVal this_WBNAME As String, ByVal WB_NAME As String, ByVal well_no As Integer, obj As Class_Boolean)
@@ -238,6 +244,11 @@ Sub DuplicateWellSpec(ByVal this_WBNAME As String, ByVal WB_NAME As String, ByVa
         .Range("K6") = long_axis
         .Range("K7") = short_axis
         .Range("K12") = degree_of_flow
+        
+        ' 2025/5/7 L12 Cell is not apply
+        ' so add next line
+        .Range("L12") = degree_of_flow + 180
+        
         .Range("K13") = well_distance
         .Range("K14") = well_height
         .Range("K15") = surface_water_height
@@ -263,9 +274,6 @@ Sub Duplicate_WATER(ByVal this_WBNAME As String, ByVal WB_NAME As String)
     
     cpRange = "E7:L8"
     
-'    Workbooks(WB_NAME).Sheets("water").Visible = True
-'    Workbooks(this_WBNAME).Sheets("water").Visible = True
-    
     Workbooks(WB_NAME).Worksheets("water").Activate
     Workbooks(WB_NAME).Worksheets("water").Range(cpRange).Select
     Selection.Copy
@@ -276,12 +284,7 @@ Sub Duplicate_WATER(ByVal this_WBNAME As String, ByVal WB_NAME As String)
     Selection.PasteSpecial Paste:=xlPasteValues, Operation:=xlNone, SkipBlanks _
         :=False, Transpose:=False
     
-'    Workbooks(WB_NAME).Sheets("water").Visible = False
-'    Workbooks(this_WBNAME).Sheets("water").Visible = False
-
 End Sub
-
-
 
 
 
