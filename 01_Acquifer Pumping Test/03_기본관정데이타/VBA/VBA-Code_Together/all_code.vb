@@ -11084,7 +11084,7 @@ Sub DuplicateWellSpec(ByVal this_WBNAME As String, ByVal WB_NAME As String, ByVa
         
         ' 2025/5/7 L12 Cell is not apply
         ' so add next line
-        .Range("L12") = degree_of_flow + 180
+        .Range("L12").formula = "=k12 + 180"
         
         .Range("K13") = well_distance
         .Range("K14") = well_height
