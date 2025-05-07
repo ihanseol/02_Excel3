@@ -14,7 +14,6 @@ Private Sub CommandButton_ToggleDirection_Click()
 End Sub
 
 
-
 ' 2025-5-3, Cell K12 changed then getDirectionChar
 '
 Private Sub Worksheet_Change(ByVal Target As Range)
@@ -100,23 +99,35 @@ Private Sub Set_RechargeFactor_Three()
 End Sub
 
 
+Private Sub OptionButton1_Click()
+  Call Set_RechargeFactor_One
+End Sub
+
+Private Sub OptionButton2_Click()
+  Call Set_RechargeFactor_Two
+End Sub
+
+Private Sub OptionButton3_Click()
+  Call Set_RechargeFactor_Three
+End Sub
+
+
+
 
 Private Sub CommandButton6_Click()
 'Select Recharge Factor
 
-    
    If Frame1.Controls("optionbutton1").value = True Then
         Call Set_RechargeFactor_One
    End If
-    
+
    If Frame1.Controls("optionbutton2").value = True Then
         Call Set_RechargeFactor_Two
    End If
-    
+
    If Frame1.Controls("optionbutton3").value = True Then
         Call Set_RechargeFactor_Three
    End If
-    
 
 End Sub
 
@@ -139,16 +150,20 @@ Private Sub Worksheet_Activate()
     Select Case get_rf_number
     
         Case "1"
-             Frame1.Controls("optionbutton1").value = True
+             'Frame1.Controls("optionbutton1").value = True
+             OptionButton1.value = True
              
         Case "2"
-             Frame1.Controls("optionbutton2").value = True
+             'Frame1.Controls("optionbutton2").value = True
+             OptionButton2.value = True
              
         Case "3"
-             Frame1.Controls("optionbutton3").value = True
+             'Frame1.Controls("optionbutton3").value = True
+             OptionButton3.value = True
              
         Case Else
-            Frame1.Controls("optionbutton1").value = True
+            'Frame1.Controls("optionbutton1").value = True
+            OptionButton1.value = True
            
     End Select
 

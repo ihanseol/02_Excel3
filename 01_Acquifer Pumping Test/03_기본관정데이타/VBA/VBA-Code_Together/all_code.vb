@@ -312,7 +312,6 @@ Private Sub CommandButton_ToggleDirection_Click()
 End Sub
 
 
-
 ' 2025-5-3, Cell K12 changed then getDirectionChar
 '
 Private Sub Worksheet_Change(ByVal Target As Range)
@@ -398,23 +397,35 @@ Private Sub Set_RechargeFactor_Three()
 End Sub
 
 
+Private Sub OptionButton1_Click()
+  Call Set_RechargeFactor_One
+End Sub
+
+Private Sub OptionButton2_Click()
+  Call Set_RechargeFactor_Two
+End Sub
+
+Private Sub OptionButton3_Click()
+  Call Set_RechargeFactor_Three
+End Sub
+
+
+
 
 Private Sub CommandButton6_Click()
 'Select Recharge Factor
 
-    
    If Frame1.Controls("optionbutton1").value = True Then
         Call Set_RechargeFactor_One
    End If
-    
+
    If Frame1.Controls("optionbutton2").value = True Then
         Call Set_RechargeFactor_Two
    End If
-    
+
    If Frame1.Controls("optionbutton3").value = True Then
         Call Set_RechargeFactor_Three
    End If
-    
 
 End Sub
 
@@ -437,16 +448,20 @@ Private Sub Worksheet_Activate()
     Select Case get_rf_number
     
         Case "1"
-             Frame1.Controls("optionbutton1").value = True
+             'Frame1.Controls("optionbutton1").value = True
+             OptionButton1.value = True
              
         Case "2"
-             Frame1.Controls("optionbutton2").value = True
+             'Frame1.Controls("optionbutton2").value = True
+             OptionButton2.value = True
              
         Case "3"
-             Frame1.Controls("optionbutton3").value = True
+             'Frame1.Controls("optionbutton3").value = True
+             OptionButton3.value = True
              
         Case Else
-            Frame1.Controls("optionbutton1").value = True
+            'Frame1.Controls("optionbutton1").value = True
+            OptionButton1.value = True
            
     End Select
 
@@ -16156,160 +16171,131 @@ End Sub
 
 
 
-
-Private Sub CommandButton4_Click()
-    Call delete_allWhpaData
+Private Sub CommandButton1_Click()
+' QT - Quality Test
+' Import Quality Test From YangSoo
+  Call ImportAll_QT
 End Sub
 
 
-Private Sub CommandButton_GetDirectionChar_Click()
-    Call modAggWhpa.getDirectionChar
-End Sub
-
-Private Sub CommandButton_ToggleDirection_Click()
-    Call BaseData_DrasticIndex.ToggleDirection
-    Call modAggWhpa.getDirectionChar
-End Sub
-
-
-
-' 2025-5-3, Cell K12 changed then getDirectionChar
-'
-Private Sub Worksheet_Change(ByVal Target As Range)
-  If Not Intersect(Target, Me.Range("K12")) Is Nothing Then
-    Call modAggWhpa.getDirectionChar
-  End If
-End Sub
-
-
+'Get Water Spec from YanSoo ilbo
 Private Sub CommandButton2_Click()
-    Call TurnOffStuff
-    Call main_drasticindex
-    Call print_drastic_string
-    Call TurnOnStuff
+
+    Call GetWaterSpecFromYangSoo_Q1
+
 End Sub
 
+
+' Get(Ec, Ph, Temp) Range - 지열공에서 통계내는 함수 ....
+' Ph, EC, Temp statistics, find range
+' data gathering function in EarthThermal test ...
 Private Sub CommandButton3_Click()
-    Call getWhpaData_AllWell
-End Sub
-
-Private Sub CommandButton7_Click()
-   Call getWhpaData_EachWell
-End Sub
-
-
-Private Function get_rf_number() As String
-    Dim rf_num As String
-
-    '=(max*rf_1*E17/1000)
-    get_rf_number = VBA.Mid(Range("F17").formula, 10, 1)
-
-End Function
-
-
-Private Sub Set_RechargeFactor_One()
-
-    Range("F17").formula = "=(max*rf_1*E17/1000)"
-    Range("F19").formula = "=(max*rf_1*E19/1000)/365"
+    Dim nofwell, i As Integer
     
-    Range("G17").formula = "=F17*allow_ratio"
-    Range("G19").formula = "=F19*allow_ratio"
-    
-    Range("E13").formula = "=Recharge!I24"
-    Range("F13").formula = "=rf_1"
-    Range("G13").formula = "=allow_ratio"
-    
-    Range("E26").formula = "=Recharge!C30"
-    
-End Sub
+    Dim lowEC() As Double
+    Dim hiEC() As Double
+    Dim lowPH() As Double
+    Dim hiPH() As Double
+    Dim lowTEMP() As Double
+    Dim hiTEMP() As Double
 
-Private Sub Set_RechargeFactor_Two()
-
-    Range("F17").formula = "=(max*rf_2*E17/1000)"
-    Range("F19").formula = "=(max*rf_2*E19/1000)/365"
+    nofwell = sheets_count()
     
-    Range("G17").formula = "=F17*allow_ratio2"
-    Range("G19").formula = "=F19*allow_ratio2"
+'    If nofwell < 2 Or Not Contains(Sheets, "a1") Then
+'        MsgBox "first Generate Simple YangSoo"
+'        Exit Sub
+'    End If
     
+    If Not IsSheet("p1") Then
+        MsgBox "First Make Summary Page"
+        Exit Sub
+    End If
     
-    Range("E13").formula = "=Recharge!I25"
-    Range("F13").formula = "=rf_2"
-    Range("G13").formula = "=allow_ratio2"
+ 
+    ReDim lowPH(1 To nofwell)
+    ReDim hiPH(1 To nofwell)
     
+    ReDim lowEC(1 To nofwell)
+    ReDim hiEC(1 To nofwell)
     
-    Range("E26").formula = "=Recharge!D30"
-End Sub
-
-
-Private Sub Set_RechargeFactor_Three()
-
-    Range("F17").formula = "=(max*rf_3*E17/1000)"
-    Range("F19").formula = "=(max*rf_3*E19/1000)/365"
+    ReDim lowTEMP(1 To nofwell)
+    ReDim hiTEMP(1 To nofwell)
     
-    Range("G17").formula = "=F17*allow_ratio3"
-    Range("G19").formula = "=F19*allow_ratio3"
-    
-    Range("E13").formula = "=Recharge!I26"
-    Range("F13").formula = "=rf_3"
-    Range("G13").formula = "=allow_ratio3"
-    
-    Range("E26").formula = "=Recharge!E30"
-    
-End Sub
-
-
-
-Private Sub CommandButton6_Click()
-'Select Recharge Factor
-
-    
-   If Frame1.Controls("optionbutton1").value = True Then
-        Call Set_RechargeFactor_One
-   End If
-    
-   If Frame1.Controls("optionbutton2").value = True Then
-        Call Set_RechargeFactor_Two
-   End If
-    
-   If Frame1.Controls("optionbutton3").value = True Then
-        Call Set_RechargeFactor_Three
-   End If
-    
-
-End Sub
-
-
-
-' 2022/6/9 Import YangSoo Data
-' Radius of Influence - 양수영향반경
-' Effective Radius - 유효우물반경
-' 2024/6/7 - 스킨계수 추가해줌 ...
-' 2024/7/9 - 관정별 임포트 해오는것을, FX 에서 가져온다.
-
-Private Sub CommandButton8_Click()
-   
-   Call modWell_Each.ImportEachWell(Range("E15").value)
+    For i = 1 To nofwell
+        lowEC(i) = getEC_Q1(cellLOW, i)
+        hiEC(i) = getEC_Q1(cellHI, i)
         
-End Sub
-
-Private Sub Worksheet_Activate()
-
-    Select Case get_rf_number
+        lowPH(i) = getPH_Q1(cellLOW, i)
+        hiPH(i) = getPH_Q1(cellHI, i)
+        
+        lowTEMP(i) = getTEMP_Q1(cellLOW, i)
+        hiTEMP(i) = getTEMP_Q1(cellHI, i)
+    Next i
     
-        Case "1"
-             Frame1.Controls("optionbutton1").value = True
-             
-        Case "2"
-             Frame1.Controls("optionbutton2").value = True
-             
-        Case "3"
-             Frame1.Controls("optionbutton3").value = True
-             
-        Case Else
-            Frame1.Controls("optionbutton1").value = True
-           
-    End Select
+    Debug.Print String(3, vbCrLf)
+    
+    Debug.Print "--Temp----------------------------------------"
+    Debug.Print "low : " & Application.min(lowTEMP), Application.max(lowTEMP)
+    Debug.Print "hi  : " & Application.min(hiTEMP), Application.max(hiTEMP)
+    Debug.Print "----------------------------------------------"
+    
+    Debug.Print "--PH------------------------------------------"
+    Debug.Print "low : " & Application.min(lowPH), Application.max(lowPH)
+    Debug.Print "hi  : " & Application.min(hiPH), Application.max(hiPH)
+    Debug.Print "----------------------------------------------"
+       
+    Debug.Print "--EC------------------------------------------"
+    Debug.Print "low : " & Application.min(lowEC), Application.max(lowEC)
+    Debug.Print "hi  : " & Application.min(hiEC), Application.max(hiEC)
+    Debug.Print "----------------------------------------------"
+End Sub
+
+
+
+' make summary page
+Private Sub CommandButton4_Click()
+    Dim nofwell As Integer
+    Dim i As Integer
+    
+    If IsSheet("p1") Then
+        MsgBox "Sheet P1 Exist .... Delete First ... ", vbOKOnly
+        Exit Sub
+    End If
+       
+    
+    nofwell = GetNumberOfWell()
+    
+    For i = 1 To nofwell
+        DuplicateQ1Page (i)
+    Next i
+End Sub
+
+
+' delete all summary page
+Private Sub CommandButton5_Click()
+
+    Call modWaterQualityTest.DeleteAllSummaryPage("Q1")
 
 End Sub
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
