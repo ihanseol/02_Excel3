@@ -129,9 +129,8 @@ End Function
 
 ' Get Direction From Well
 Function getDirectionFromWell(i) As Integer
-
-    Sheets(CStr(i)).Range("k12").Select
-    If Selection.Font.Bold Then
+    
+    If Sheets(CStr(i)).Range("k12").Font.Bold Then
         getDirectionFromWell = Sheets(CStr(i)).Range("k12").value
     Else
         getDirectionFromWell = Sheets(CStr(i)).Range("l12").value
