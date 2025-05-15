@@ -1,8 +1,12 @@
 Attribute VB_Name = "vbGit"
+' *********************************************************************
+' * Ctrl+M , M -> Module,   GitSave
+' * 2025/5/15
+' *********************************************************************
 
 
 Sub GitSave()
-Attribute GitSave.VB_ProcData.VB_Invoke_Func = "p\n14"
+Attribute GitSave.VB_ProcData.VB_Invoke_Func = "m\n14"
     
     DeleteAndMake
     ExportModules

@@ -1,13 +1,34 @@
 Attribute VB_Name = "water_GenerateCopy"
 
-' ***************************************************************
-' water_GenerationCopy
-'
-' ***************************************************************
+' *********************************************************************
+' * water_GenerationCopy
+' *********************************************************************
+' *  ShortCut of this sheet
+' *********************************************************************
+' * 2025/5/15
+' * TransferWellData
+' * Ctrl+R , Transfer Well Data
+' * =D2&" "&E2&" 번지"
+' *********************************************************************
+' * Ctrl+Q,  Toggle SS and AA Sheet
+' * 2025/5/15
+' *********************************************************************
+' * Ctrl+P , Toggle OX, Toggle SINGO, HEOGA' Toggle SS and AA Sheet
+'  2025/5/15
+' *********************************************************************
+' * Ctrl+D , Toggle OX, Toggle SINGO, HEOGA' Toggle SS and AA Sheet
+' * 2025/5/15
+' *********************************************************************
+
+
 
 Option Explicit
 
 
+' ***************************************************************
+' * Ctrl+Q,  Toggle SS and AA Sheet
+' * 2025/5/15
+' ***************************************************************
 Sub SS_Active()
 Attribute SS_Active.VB_ProcData.VB_Invoke_Func = "q\n14"
     If ActiveSheet.Name = "ss" Then
@@ -104,7 +125,21 @@ Function Alpha_Column(Cell_Add As Range) As String
 End Function
 
 
-' Ctrl+D , Toggle OX, Toggle SINGO, HEOGA
+
+' ***************************************************************
+' *  Ctrl+P , Toggle OX, Toggle SINGO, HEOGA' Toggle SS and AA Sheet
+' *  2025/5/15
+' ***************************************************************
+Sub ExportDataSheet()
+Attribute ExportDataSheet.VB_ProcData.VB_Invoke_Func = "p\n14"
+    Call ExportDataWorksheet("ss_out")
+    Call ExportDataWorksheet("aa_out")
+End Sub
+
+' ***************************************************************
+' *  Ctrl+D , Toggle OX, Toggle SINGO, HEOGA' Toggle SS and AA Sheet
+' *  2025/5/15
+' ***************************************************************
 Sub ToggleOX()
 Attribute ToggleOX.VB_ProcData.VB_Invoke_Func = "d\n14"
     Dim activeCellColumn, activeCellRow As String
@@ -197,7 +232,7 @@ Attribute ToggleOX.VB_ProcData.VB_Invoke_Func = "d\n14"
       Call AddressReset(ActiveSheet.Name)
     End If
     
-    
+        
     If ActiveSheet.Name = "ss" And activeCellColumn = "K" Then
         UserForm_SS.Show
     End If
@@ -209,6 +244,103 @@ Attribute ToggleOX.VB_ProcData.VB_Invoke_Func = "d\n14"
     If ActiveSheet.Name = "ii" And activeCellColumn = "K" Then
         UserForm_II.Show
     End If
+    
+    
+    ' 2025, 5, 15 - Export UsedWell DataSheet
+    If ActiveSheet.Name = "ss" And activeCellColumn = "N" Then
+      ' ExportAllUsedWellData
+      Call MakeOutSheet
+    End If
+    
+End Sub
+
+
+' ******************************************************
+' * 2025/5/15
+' * Make Export DataSheet,  SS, AA, II
+' ******************************************************
+Sub MakeOutSheet()
+    Dim i As Integer
+    Dim nSS, nAA, nII As Integer
+   
+' ******************************************************
+' *   Initial Clear & Number Setting
+' ******************************************************
+   
+    ' Range("W6").Value = Sheets("ss").Range("ss_in_count").Value
+    
+    nSS = Sheets("ss").Range("ss_in_count").Value + Sheets("ss").Range("ss_out_count").Value
+    nAA = Sheets("ss").Range("aa_in_count").Value + Sheets("ss").Range("aa_out_count").Value
+    nII = Sheets("ss").Range("ii_in_count").Value + Sheets("ss").Range("ii_out_count").Value
+    
+    Sheets("ss_out").Activate
+    ActiveSheet.Range("A2:Z300").Select
+    Selection.ClearContents
+    
+    For i = 1 To nSS
+        Cells(i + 1, "A").Value = "S-" & i
+    Next i
+    
+    Sheets("aa_out").Activate
+    ActiveSheet.Range("A2:Z300").Select
+    Selection.ClearContents
+        
+    For i = 1 To nAA
+        Cells(i + 1, "A").Value = "A-" & i
+    Next i
+    
+    
+    Sheets("ii_out").Activate
+    ActiveSheet.Range("A2:Z300").Select
+    Selection.ClearContents
+    Range("A1").Select
+
+    For i = 1 To nII
+        Cells(i + 1, "A").Value = "I-" & i
+    Next i
+    
+' ******************************************************
+' *   Initial Clear & Number Setting
+' ******************************************************
+
+    Sheets("ss").Activate
+    If nSS >= 3 Then
+        ActiveSheet.Range("m2:s" & CStr(nSS + 1)).Select
+        Selection.Copy
+        Range("A1").Select
+        Sheets("ss_out").Activate
+        ActiveSheet.Range("b2").Select
+        Selection.PasteSpecial Paste:=xlPasteValues, Operation:=xlNone, SkipBlanks _
+                :=False, Transpose:=False
+        Range("A1").Select
+    End If
+    
+    Sheets("aa").Activate
+    
+    If nAA >= 3 Then
+        ActiveSheet.Range("m2:s" & CStr(nAA + 1)).Select
+        Selection.Copy
+        Range("A1").Select
+        Sheets("aa_out").Activate
+        ActiveSheet.Range("b2").Select
+        Selection.PasteSpecial Paste:=xlPasteValues, Operation:=xlNone, SkipBlanks _
+                :=False, Transpose:=False
+        Range("A1").Select
+    End If
+    
+    Sheets("ii").Activate
+    
+    If nII > 2 Then
+        ActiveSheet.Range("m2:s" & CStr(nII + 1)).Select
+        Selection.Copy
+        Range("A1").Select
+        Sheets("ii_out").Activate
+        ActiveSheet.Range("b2").Select
+        Selection.PasteSpecial Paste:=xlPasteValues, Operation:=xlNone, SkipBlanks _
+                :=False, Transpose:=False
+        Range("A1").Select
+    End If
+
 End Sub
 
 
@@ -241,8 +373,14 @@ Sub ToggleAddressFormatString()
 
 End Sub
 
-' Ctrl+R , Transfer Well Data
-' =D2&" "&E2&" 번지"
+
+
+' ******************************************************
+' * 2025/5/15
+' * TransferWellData
+' * Ctrl+R , Transfer Well Data
+' * =D2&" "&E2&" 번지"
+' ******************************************************
 Sub TransferWellData()
 Attribute TransferWellData.VB_ProcData.VB_Invoke_Func = "r\n14"
 
@@ -450,7 +588,7 @@ End Sub
 
 
 ' 2023/4/19 - copy modify
-'2024/12/25 -- add short cut (Ctrl+i)
+' 2024/12/25 -- add short cut (Ctrl+i)
 
 Sub insertRow()
 Attribute insertRow.VB_ProcData.VB_Invoke_Func = "i\n14"
@@ -493,6 +631,8 @@ Attribute insertRow.VB_ProcData.VB_Invoke_Func = "i\n14"
     ActiveWindow.LargeScroll Down:=-1
     ActiveWindow.LargeScroll Down:=-1
 End Sub
+
+
 
 
 

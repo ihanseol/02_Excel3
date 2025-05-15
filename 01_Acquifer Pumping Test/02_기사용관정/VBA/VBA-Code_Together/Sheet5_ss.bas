@@ -102,9 +102,15 @@ Private Sub CommandButton4_Click()
    If Sheets("ref").Visible Then
         Sheets("ref").Visible = False
         Sheets("ref1").Visible = False
+        Sheets("ss_out").Visible = False
+        Sheets("aa_out").Visible = False
+        Sheets("ii_out").Visible = False
     Else
         Sheets("ref").Visible = True
         Sheets("ref1").Visible = True
+        Sheets("ss_out").Visible = True
+        Sheets("aa_out").Visible = True
+        Sheets("ii_out").Visible = True
     End If
     
 End Sub

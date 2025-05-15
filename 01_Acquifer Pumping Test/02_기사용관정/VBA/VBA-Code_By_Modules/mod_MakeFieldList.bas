@@ -91,6 +91,57 @@ Sub ExportData()
     Call ExportCurrentWorksheet("data_out")
 End Sub
 
+
+
+
+
+' ***************************************************************
+' * Ctrl+P , Export Data WorkSheet , SS_OUT, AA_OUT, II_OUT
+'*  2025/5/15
+' ***************************************************************
+
+Sub ExportDataWorksheet(sh As String)
+    Dim filePath As String
+    
+    If Not ActivateSheet(sh) Then
+        Debug.Print "ActivateSheet Error, maybe sheet does not exist ...."
+        Exit Sub
+    End If
+        
+    'filePath = Application.GetSaveAsFilename(FileFilter:="Excel Files (*.xlsx), *.xlsx")
+    ' filePath = "d:\05_Send\aaa.xlsx"
+    
+    filePath = "d:\05_Send\" & sh & ".xlsx"
+    
+    If VarType(filePath) = vbString Then
+    
+        If Dir(filePath) <> "" Then
+            ' Delete the file
+            Kill filePath
+    
+'            If MsgBox("The file " & filePath & " already exists. Do you want to overwrite it?", _
+'                      vbQuestion + vbYesNo, "Confirm Overwrite") = vbNo Then
+'                Exit Sub
+'            End If
+        End If
+    
+    
+        If Sheets(sh).Visible = False Then
+            Sheets(sh).Visible = True
+        End If
+        
+        Sheets(sh).Activate
+        ActiveSheet.Copy
+        ActiveWorkbook.SaveAs fileName:=filePath, FileFormat:=xlOpenXMLWorkbook, ConflictResolution:=xlLocalSessionChanges
+        ActiveWorkbook.Close savechanges:=False
+        
+        
+        Sheets(sh).Visible = False
+    End If
+End Sub
+
+
+
 Sub ExportCurrentWorksheet(sh As String)
     Dim filePath As String
     
