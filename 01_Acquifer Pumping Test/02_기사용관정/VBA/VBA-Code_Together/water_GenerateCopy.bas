@@ -4,16 +4,16 @@
 ' *********************************************************************
 ' *  ShortCut of this sheet
 ' *********************************************************************
-' * 2025/5/15
 ' * TransferWellData
 ' * Ctrl+R , Transfer Well Data
 ' * =D2&" "&E2&" ¹øÁö"
+' * 2025/5/15
 ' *********************************************************************
 ' * Ctrl+Q,  Toggle SS and AA Sheet
 ' * 2025/5/15
 ' *********************************************************************
-' * Ctrl+P , Toggle OX, Toggle SINGO, HEOGA' Toggle SS and AA Sheet
-'  2025/5/15
+' *  Ctrl+P , ExportDataSheet()
+' *  2025/5/15
 ' *********************************************************************
 ' * Ctrl+D , Toggle OX, Toggle SINGO, HEOGA' Toggle SS and AA Sheet
 ' * 2025/5/15
@@ -125,7 +125,7 @@ End Function
 
 
 ' ***************************************************************
-' *  Ctrl+P , Toggle OX, Toggle SINGO, HEOGA' Toggle SS and AA Sheet
+' *  Ctrl+P , ExportDataSheet()
 ' *  2025/5/15
 ' ***************************************************************
 Sub ExportDataSheet()
@@ -243,7 +243,7 @@ Sub ToggleOX()
     
     
     ' 2025, 5, 15 - Export UsedWell DataSheet
-    If ActiveSheet.Name = "ss" And activeCellColumn = "N" Then
+    If (ActiveSheet.Name = "ss" Or ActiveSheet.Name = "aa") And activeCellColumn = "N" Then
       ' ExportAllUsedWellData
       Call MakeOutSheet
     End If
