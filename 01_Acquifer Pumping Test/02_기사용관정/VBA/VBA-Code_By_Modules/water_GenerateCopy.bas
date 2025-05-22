@@ -4,6 +4,14 @@ Attribute VB_Name = "water_GenerateCopy"
 ' * water_GenerationCopy
 ' *********************************************************************
 ' *  ShortCut of this sheet
+
+' *********************************************************************
+' * Ctrl+I , insert Row                                               *
+' * 2025/5/23                                                         *
+' *********************************************************************
+' * Ctrl+Shift+I , Initial Clear                                      *
+' * SubModuleInitialClear()                                           *
+' * 2025/5/23                                                         *
 ' *********************************************************************
 ' * TransferWellData
 ' * Ctrl+R , Transfer Well Data
@@ -22,9 +30,53 @@ Attribute VB_Name = "water_GenerateCopy"
 ' * Ctrl+Shift+F , Finalize Active Sheet
 ' * 2025/5/23
 ' *********************************************************************
+' * Ctrl+Shift+C , Main, Generate Copy                                *
+' * MainMoudleGenerateCopy()                                          *
+' * 2025/5/23                                                         *
+' *********************************************************************
+' * Ctrl+Shift+D , Delete                                             *
+' * SubModuleCleanCopySection()                                       *
+' * 2025/5/23                                                         *
+' *********************************************************************
+' * Ctrl+Shift+T , Toggle Sheet Show and Hide hidden Sheet            *
+' * ShowHiddenSheet()                                                 *
+' * 2025/5/23                                                         *
+' *********************************************************************
 
 
 Option Explicit
+
+Private Declare PtrSafe Function OpenClipboard Lib "user32" (ByVal hwnd As LongPtr) As Long
+Private Declare PtrSafe Function CloseClipboard Lib "user32" () As Long
+Private Declare PtrSafe Function EmptyClipboard Lib "user32" () As Long
+
+
+
+
+' *********************************************************************
+' * Ctrl+Shift+T , Toggle Sheet Show and Hide hidden Sheet            *
+' * ShowHiddenSheet()                                                 *
+' * 2025/5/23                                                         *
+' *********************************************************************
+
+Sub ShowHiddenSheet()
+Attribute ShowHiddenSheet.VB_ProcData.VB_Invoke_Func = "T\n14"
+
+  If Sheets("ref").Visible Then
+        Sheets("ref").Visible = False
+        Sheets("ref1").Visible = False
+        Sheets("ss_out").Visible = False
+        Sheets("aa_out").Visible = False
+        Sheets("ii_out").Visible = False
+    Else
+        Sheets("ref").Visible = True
+        Sheets("ref1").Visible = True
+        Sheets("ss_out").Visible = True
+        Sheets("aa_out").Visible = True
+        Sheets("ii_out").Visible = True
+    End If
+
+End Sub
 
 
 ' ***************************************************************
@@ -489,15 +541,53 @@ Sub test()
 End Sub
 
 
-Sub MainMoudleGenerateCopy()
-    Dim lastrow As Long
-        
-    lastrow = lastRowByKey("A1")
-    Call DoCopy(lastrow)
+
+Sub ClearSystemClipboard()
+    OpenClipboard 0
+    EmptyClipboard
+    CloseClipboard
 End Sub
 
 
+' *********************************************************************
+' * Ctrl+Shift+C , Main, Generate Copy                                *
+' * MainMoudleGenerateCopy()                                          *
+' * 2025/5/23                                                         *
+' *********************************************************************
+Sub MainMoudleGenerateCopy()
+Attribute MainMoudleGenerateCopy.VB_Description = "Copy, Paste"
+Attribute MainMoudleGenerateCopy.VB_ProcData.VB_Invoke_Func = "C\n14"
+    Dim lastrow As Long
+        
+    Call ClearSystemClipboard
+    Call TurnOffStuff
+    
+    Sheets("ss").Activate
+    lastrow = lastRowByKey("A1")
+    Call DoCopy(lastrow)
+    
+    Sheets("aa").Activate
+    lastrow = lastRowByKey("A1")
+    Call DoCopy(lastrow)
+    
+    Sheets("ii").Activate
+    lastrow = lastRowByKey("A1")
+    Call DoCopy(lastrow)
+    
+    Sheets("ss").Activate
+    
+    Call TurnOnStuff
+    
+End Sub
+
+
+' *********************************************************************
+' * Ctrl+Shift+I , Initial Clear                                      *
+' * SubModuleInitialClear()                                           *
+' * 2025/5/23                                                         *
+' *********************************************************************
 Sub SubModuleInitialClear()
+Attribute SubModuleInitialClear.VB_ProcData.VB_Invoke_Func = "I\n14"
     Dim lastrow As Long
     Dim userChoice As VbMsgBoxResult
     
@@ -609,19 +699,41 @@ Attribute Finallize.VB_ProcData.VB_Invoke_Func = "F\n14"
       
 End Sub
 
+
+
+' *********************************************************************
+' * Ctrl+Shift+D , Delete                                             *
+' * SubModuleCleanCopySection()                                       *
+' * 2025/5/23                                                         *
+' *********************************************************************
 Sub SubModuleCleanCopySection()
+Attribute SubModuleCleanCopySection.VB_ProcData.VB_Invoke_Func = "D\n14"
     Dim lastrow As Long
         
+    Call TurnOffStuff
+    
+    Sheets("ss").Activate
     lastrow = lastRowByKey("A1")
     Range("n2:r" & lastrow).Select
     Selection.ClearContents
-    Range("P14").Select
+    Range("a1").Select
+    
+    Sheets("aa").Activate
+    lastrow = lastRowByKey("A1")
+    Range("n2:r" & lastrow).Select
+    Selection.ClearContents
+    Range("a1").Select
+    
+    Call TurnOnStuff
+    
+    Sheets("ss").Activate
 End Sub
 
 
-' 2023/4/19 - copy modify
-' 2024/12/25 -- add short cut (Ctrl+i)
-
+' *********************************************************************
+' * Ctrl+I , insert Row                                               *
+' * 2025/5/23                                                         *
+' *********************************************************************
 Sub insertRow()
 Attribute insertRow.VB_ProcData.VB_Invoke_Func = "i\n14"
     Dim lastrow As Long, i As Long, j As Long
@@ -664,6 +776,16 @@ Attribute insertRow.VB_ProcData.VB_Invoke_Func = "i\n14"
     ActiveWindow.LargeScroll Down:=-1
 End Sub
 
+
+Public Sub TurnOffStuff()
+    Application.Calculation = xlCalculationManual
+    Application.ScreenUpdating = False
+End Sub
+
+Public Sub TurnOnStuff()
+    Application.Calculation = xlCalculationAutomatic
+    Application.ScreenUpdating = True
+End Sub
 
 
 
