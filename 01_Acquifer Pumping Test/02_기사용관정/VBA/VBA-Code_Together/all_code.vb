@@ -1106,6 +1106,10 @@ Sub Finallize()
     ' 2025/5/22, Just in cas finalize then backkup my file ...
     Call SaveBackupToDocuments
     
+    If Range("L2").Value = 0 Then
+        Call water_q.ComputeQ
+    End If
+    
     lastrow = lastRowByKey("A1")
     delStartRow = lastRowByKey("D1") + 1
     
