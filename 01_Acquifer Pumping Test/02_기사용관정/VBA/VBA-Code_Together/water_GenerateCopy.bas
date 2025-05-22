@@ -549,6 +549,12 @@ Sub Finallize()
     'if q is 0 then this section is not have water resource so clear next well
     '
     If Range("L2").Value = 0 Then
+        userChoice = MsgBox("Watch it the Q of this is 0 !!!, OK -> Exit ", vbOKCancel, "Confirmation")
+        
+        If userChoice <> vbOK Then
+            Exit Sub
+        End If
+        
         delStartRow = 3
         delEndRow = lastRowByKey("L1")
     Else
