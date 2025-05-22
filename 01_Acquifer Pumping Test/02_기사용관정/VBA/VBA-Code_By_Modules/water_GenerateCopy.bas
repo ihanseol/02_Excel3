@@ -525,11 +525,29 @@ Sub SubModuleInitialClear()
     Range("m2").Select
 End Sub
 
+Sub SaveBackupToDocuments()
+    Dim documentsPath As String
+    Dim backupPath As String
+    
+    On Error GoTo ErrorHandler
+    
+    documentsPath = Environ("USERPROFILE") & "\Documents\"
+    backupPath = documentsPath & "backup.xlsm"
+    ThisWorkbook.SaveCopyAs backupPath
+    ' MsgBox "Backup saved to: " & backupPath, vbInformation, "Backup Complete"
+    Exit Sub
+ErrorHandler:
+    ' MsgBox "Error saving backup: " & Err.Description, vbCritical, "Backup Error"
+End Sub
 
 Sub Finallize()
     Dim lastrow As Long
     Dim delStartRow, delEndRow, delAddressStart As Long
     Dim userChoice As VbMsgBoxResult
+    
+       
+    ' 2025/5/22, Just in cas finalize then backkup my file ...
+    Call SaveBackupToDocuments
     
     lastrow = lastRowByKey("A1")
     delStartRow = lastRowByKey("D1") + 1
@@ -554,12 +572,6 @@ Sub Finallize()
     'if q is 0 then this section is not have water resource so clear next well
     '
     If Range("L2").Value = 0 Then
-        userChoice = MsgBox("Watch it the Q of this is 0 !!!, OK -> Exit ", vbOKCancel, "Confirmation")
-        
-        If userChoice <> vbOK Then
-            Exit Sub
-        End If
-        
         delStartRow = 3
         delEndRow = lastRowByKey("L1")
     Else
