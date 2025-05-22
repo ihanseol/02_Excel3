@@ -12567,6 +12567,8 @@ Function AddressReducer(ByVal val_address As String) As String
         
     Address = Replace(Address, "특별자치", "")
     Address = Replace(Address, "광역", "")
+    Address = Replace(Address, "충청남도", "")
+    Address = Replace(Address, "충남", "")
     AddressArray = Split(Address, " ")
     
     For i = 0 To UBound(AddressArray)
