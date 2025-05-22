@@ -18,7 +18,9 @@
 ' * Ctrl+D , Toggle OX, Toggle SINGO, HEOGA' Toggle SS and AA Sheet
 ' * 2025/5/15
 ' *********************************************************************
-
+' * Ctrl+Shift+F , Finalize Active Sheet
+' * 2025/5/23
+' *********************************************************************
 
 
 Option Explicit
@@ -535,16 +537,23 @@ ErrorHandler:
     ' MsgBox "Error saving backup: " & Err.Description, vbCritical, "Backup Error"
 End Sub
 
+
+' *********************************************************************
+' * Ctrl+Shift+F , Finalize Active Sheet
+' * 2025/5/23
+' *********************************************************************
 Sub Finallize()
     Dim lastrow As Long
     Dim delStartRow, delEndRow, delAddressStart As Long
     Dim userChoice As VbMsgBoxResult
-    
+    Dim shName As String
        
     ' 2025/5/22, Just in cas finalize then backkup my file ...
     Call SaveBackupToDocuments
+    ' shName = ActiveSheet.Name
     
     If Range("L2").Value = 0 Then
+        Call Popup_MessageBox("Calculation Compute Q .... ")
         Call water_q.ComputeQ
     End If
     
