@@ -1,10 +1,10 @@
 Attribute VB_Name = "water_GenerateCopy"
 
 ' *********************************************************************
-' * water_GenerationCopy
+' * water_GenerationCopy                                              *
 ' *********************************************************************
-' *  ShortCut of this sheet
-
+' *  ShortCut of this sheet                                           *
+' *                                                                   *
 ' *********************************************************************
 ' * Ctrl+I , insert Row                                               *
 ' * 2025/5/23                                                         *
@@ -13,22 +13,22 @@ Attribute VB_Name = "water_GenerateCopy"
 ' * SubModuleInitialClear()                                           *
 ' * 2025/5/23                                                         *
 ' *********************************************************************
-' * TransferWellData
-' * Ctrl+R , Transfer Well Data
-' * =D2&" "&E2&" 번지"
-' * 2025/5/15
+' * TransferWellData                                                  *
+' * Ctrl+R , Transfer Well Data                                       *
+' * =D2&" "&E2&" 번지"                                                 *
+' * 2025/5/15                                                         *
 ' *********************************************************************
-' * Ctrl+Q,  Toggle SS and AA Sheet
-' * 2025/5/15
+' * Ctrl+Q,  Toggle SS and AA Sheet                                   *
+' * 2025/5/15                                                         *
 ' *********************************************************************
-' *  Ctrl+P , ExportDataSheet()
-' *  2025/5/15
+' *  Ctrl+P , ExportDataSheet()                                       *
+' *  2025/5/15                                                        *
 ' *********************************************************************
-' * Ctrl+D , Toggle OX, Toggle SINGO, HEOGA' Toggle SS and AA Sheet
-' * 2025/5/15
+' * Ctrl+D , Toggle OX, Toggle SINGO, HEOGA' Toggle SS and AA Sheet   *
+' * 2025/5/15                                                         *
 ' *********************************************************************
-' * Ctrl+Shift+F , Finalize Active Sheet
-' * 2025/5/23
+' * Ctrl+Shift+F , Finalize Active Sheet                              *
+' * 2025/5/23                                                         *
 ' *********************************************************************
 ' * Ctrl+Shift+C , Main, Generate Copy                                *
 ' * MainMoudleGenerateCopy()                                          *
@@ -79,10 +79,10 @@ Attribute ShowHiddenSheet.VB_ProcData.VB_Invoke_Func = "T\n14"
 End Sub
 
 
-' ***************************************************************
-' * Ctrl+Q,  Toggle SS and AA Sheet
-' * 2025/5/15
-' ***************************************************************
+' *********************************************************************
+' * Ctrl+Q,  Toggle SS and AA Sheet                                   *
+' * 2025/5/15                                                         *
+' *********************************************************************
 Sub SS_Active()
 Attribute SS_Active.VB_ProcData.VB_Invoke_Func = "q\n14"
     If ActiveSheet.Name = "ss" Then
@@ -180,20 +180,20 @@ End Function
 
 
 
-' ***************************************************************
-' *  Ctrl+P , ExportDataSheet()
-' *  2025/5/15
-' ***************************************************************
+' *********************************************************************
+' *  Ctrl+P , ExportDataSheet()                                       *
+' *  2025/5/15                                                        *
+' *********************************************************************
 Sub ExportDataSheet()
 Attribute ExportDataSheet.VB_ProcData.VB_Invoke_Func = "p\n14"
     Call ExportDataWorksheet("ss_out")
     Call ExportDataWorksheet("aa_out")
 End Sub
 
-' ***************************************************************
-' *  Ctrl+D , Toggle OX, Toggle SINGO, HEOGA' Toggle SS and AA Sheet
-' *  2025/5/15
-' ***************************************************************
+' *********************************************************************
+' *  Ctrl+D , Toggle OX, Toggle SINGO, HEOGA' Toggle SS and AA Sheet  *
+' *  2025/5/15                                                        *
+' *********************************************************************
 Sub ToggleOX()
 Attribute ToggleOX.VB_ProcData.VB_Invoke_Func = "d\n14"
     Dim activeCellColumn, activeCellRow As String
@@ -309,17 +309,17 @@ Attribute ToggleOX.VB_ProcData.VB_Invoke_Func = "d\n14"
 End Sub
 
 
-' ******************************************************
-' * 2025/5/15
-' * Make Export DataSheet,  SS, AA, II
-' ******************************************************
+' *********************************************************************
+' * 2025/5/15                                                         *
+' * Make Export DataSheet,  SS, AA, II                                *
+' *********************************************************************
 Sub MakeOutSheet()
     Dim i As Integer
     Dim nSS, nAA, nII As Integer
    
-' ******************************************************
-' *   Initial Clear & Number Setting
-' ******************************************************
+' *********************************************************************
+' *   Initial Clear & Number Setting                                  *
+' *********************************************************************
    
     ' Range("W6").Value = Sheets("ss").Range("ss_in_count").Value
     
@@ -353,9 +353,9 @@ Sub MakeOutSheet()
         Cells(i + 1, "A").Value = "I-" & i
     Next i
     
-' ******************************************************
-' *   Initial Clear & Number Setting
-' ******************************************************
+' *********************************************************************
+' *   Initial Clear & Number Setting                                  *
+' *********************************************************************
 
     Sheets("ss").Activate
     If nSS >= 3 Then
@@ -429,12 +429,12 @@ End Sub
 
 
 
-' ******************************************************
-' * 2025/5/15
-' * TransferWellData
-' * Ctrl+R , Transfer Well Data
-' * =D2&" "&E2&" 번지"
-' ******************************************************
+' *********************************************************************
+' * 2025/5/15                                                         *
+' * TransferWellData                                                  *
+' * Ctrl+R , Transfer Well Data                                       *
+' * =D2&" "&E2&" 번지"                                                 *
+' *********************************************************************
 Sub TransferWellData()
 Attribute TransferWellData.VB_ProcData.VB_Invoke_Func = "r\n14"
 
@@ -634,8 +634,8 @@ End Sub
 
 
 ' *********************************************************************
-' * Ctrl+Shift+F , Finalize Active Sheet
-' * 2025/5/23
+' * Ctrl+Shift+F , Finalize Active Sheet                              *
+' * 2025/5/23                                                         *
 ' *********************************************************************
 Sub Finallize()
 Attribute Finallize.VB_ProcData.VB_Invoke_Func = "F\n14"
